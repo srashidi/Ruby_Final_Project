@@ -13,4 +13,17 @@ class Gameboard
   BLACK_KNIGHT = "\u{265E}"
   BLACK_PAWN = "\u{265F}"
 
+  def initialize
+    @array = []
+    x,y = 0,0
+    while x < 8
+      while y < 8
+        @array << [x,y]
+        y += 1
+      end
+      x += 1
+      y = 0
+    end
+  end
+
 end
