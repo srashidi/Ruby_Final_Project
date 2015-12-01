@@ -13,6 +13,8 @@ class Gameboard
   BLACK_KNIGHT = "\u{265E}"
   BLACK_PAWN = "\u{265F}"
 
+	attr_reader :array
+
   def initialize
     @array = []
     x,y = 0,0
