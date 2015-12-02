@@ -1,10 +1,12 @@
 class Piece
 
 	attr_reader :type, :color, :view
+	attr_accessor :position
 
-	def initialize(type,color)
+	def initialize(type,color,position)
 		@type = type
 		@color = color
+		@position = position
 		@view = case color
 		when :white
 			case type
