@@ -63,6 +63,52 @@ class Piece
 				array << [array[i+7][0].next,array[i+7][1]-1]
 				i += 8
 			end
+		when :rook
+			array << [x.next,y]
+			array << [x,y+1]
+			array << [x.prev,y]
+			array << [x,y-1]
+			i = 0
+			6.times do
+				array << [array[i][0].next,y]
+				array << [x,array[i+1][1]+1]
+				array << [array[i+2][0].prev,y]
+				array << [x,array[i+3][1]-1]
+				i += 4
+			end
+		when :bishop
+			array << [x.next,y+1]
+			array << [x.prev,y+1]
+			array << [x.prev,y-1]
+			array << [x.next,y-1]
+			i = 0
+			6.times do
+				array << [array[i][0].next,array[i][1]+1]
+				array << [array[i+1][0].prev,array[i+1][1]+1]
+				array << [array[i+2][0].prev,array[i+2][1]-1]
+				array << [array[i+3][0].next,array[i+3][1]-1]
+				i += 4
+			end
+		when :knight
+			array << [x.next,y+2]
+			array << [x.next,y-2]
+			array << [x.prev,y+2]
+			array << [x.prev,y-2]
+			array << [x.next.next,y+1]
+			array << [x.next.next,y-1]
+			array << [x.prev.prev,y+1]
+			array << [x.prev.prev,y-1]
+		when :pawn
+			case @type
+			when :white
+				array << [x,y+1]
+				array << [x.next,y+1]
+				array << [x.prev,y+1]
+			when :black
+				array << [x,y-1]
+				array << [x.next,y-1]
+				array << [x.prev,y-1]
+			end
 		end
 		array
 	end

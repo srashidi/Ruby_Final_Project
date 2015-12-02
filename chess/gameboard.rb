@@ -8,7 +8,7 @@ class Gameboard
   def initialize
     @spaces = []
     y = 1
-    (:a..:h).each do |x|
+    (:A..:H).each do |x|
       while y < 9
         @spaces << [x,y]
         y += 1
@@ -16,14 +16,12 @@ class Gameboard
       y = 1
     end
     @occupied_spaces = []
-    (:a..:h).each do |x|
+    (:A..:H).each do |x|
       while y < 3
         @occupied_spaces << [x,y]
         y += 1
       end
-    end
-    y = 7
-    (:a..:h).each do |x|
+			y = 7
       while y < 9
         @occupied_spaces << [x,y]
         y += 1
