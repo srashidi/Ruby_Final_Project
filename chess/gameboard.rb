@@ -6,15 +6,7 @@ class Gameboard
 	attr_accessor :occupied_spaces
 
   def initialize
-    @spaces = []
-    y = 1
-    (:A..:H).each do |x|
-      while y < 9
-        @spaces << [x,y]
-        y += 1
-      end
-      y = 1
-    end
+    @spaces = spaces
     @occupied_spaces = []
     (:A..:H).each do |x|
       while y < 3
@@ -27,6 +19,19 @@ class Gameboard
         y += 1
       end
     end
+  end
+
+  def spaces
+  	array = []
+    y = 1
+    (:A..:H).each do |x|
+      while y < 9
+        array << [x,y]
+        y += 1
+      end
+      y = 1
+    end
+    array
   end
 
   def place_piece(piece,space)

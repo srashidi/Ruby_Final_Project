@@ -110,8 +110,21 @@ class Piece
 				array << [x.prev,y-1]
 			end
 		end
-		array
+		array & spaces
 	end
+
+	def spaces
+  	array = []
+    y = 1
+    (:A..:H).each do |x|
+      while y < 9
+        array << [x,y]
+        y += 1
+      end
+      y = 1
+    end
+    array
+  end
 
 end
 
