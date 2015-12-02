@@ -7,16 +7,28 @@ class Gameboard
 
   def initialize
     @spaces = []
-    x,y = 0,0
-    while x < 8
+    y = 1
+    ("a".."h").each do |x|
       while y < 8
         @spaces << [x,y]
         y += 1
       end
-      x += 1
-      y = 0
+      y = 1
     end
     @occupied_spaces = []
+    ("a".."h").each do |x|
+      while y < 3
+        @occupied_spaces << [x,y]
+        y += 1
+      end
+    end
+    y = 7
+    ("a".."h").each do |x|
+      while y < 9
+        @occupied_spaces << [x,y]
+        y += 1
+      end
+    end
   end
 
   def place_piece(piece,space)
