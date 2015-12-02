@@ -16,16 +16,17 @@ class Gameboard
 	attr_reader :array
 
   def initialize
-    @array = []
+    @spaces = []
     x,y = 0,0
     while x < 8
       while y < 8
-        @array << [x,y]
+        @spaces << [x,y]
         y += 1
       end
       x += 1
       y = 0
     end
+    @occupied_spaces = []
   end
 
 end
