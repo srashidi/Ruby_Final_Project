@@ -1,3 +1,5 @@
+require './piece'
+
 class Gameboard
 
 	attr_reader :array
@@ -15,6 +17,10 @@ class Gameboard
       y = 0
     end
     @occupied_spaces = []
+  end
+
+  def place_piece(piece,space)
+
   end
 
 end
