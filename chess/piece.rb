@@ -30,91 +30,91 @@ class Piece
 	end
 
 	def possible_moves
-		array = []
-		x,y = position[0],position[1]
+		hash = {}
+		x,y = @position[0],@position[1]
 		case @type
 		when :king
-			array << [[x.next,y]]
-			array << [[x.next,y+1]]
-			array << [[x,y+1]]
-			array << [[x.prev,y+1]]
-			array << [[x.prev,y]]
-			array << [[x.prev,y-1]]
-			array << [[x,y-1]]
-			array << [[x.next,y-1]]
+			hash[:east] = [[x.next,y]]
+			hash[:northeast] = [[x.next,y+1]]
+			hash[:north] = [[x,y+1]]
+			hash[:northwest] = [[x.prev,y+1]]
+			hash[:west] = [[x.prev,y]]
+			hash[:southwest] = [[x.prev,y-1]]
+			hash[:south] = [[x,y-1]]
+			hash[:southeast] = [[x.next,y-1]]
 		when :queen
-			array << [[x.next,y]]
-			array << [[x.next,y+1]]
-			array << [[x,y+1]]
-			array << [[x.prev,y+1]]
-			array << [[x.prev,y]]
-			array << [[x.prev,y-1]]
-			array << [[x,y-1]]
-			array << [[x.next,y-1]]
+			hash[:east] = [[x.next,y]]
+			hash[:northeast] = [[x.next,y+1]]
+			hash[:north] = [[x,y+1]]
+			hash[:northwest] = [[x.prev,y+1]]
+			hash[:west] = [[x.prev,y]]
+			hash[:southwest] = [[x.prev,y-1]]
+			hash[:south] = [[x,y-1]]
+			hash[:southeast] = [[x.next,y-1]]
 			i = 0
 			6.times do
-				array[0] << [array[0][i][0].next,y]
-				array[1] << [array[1][i][0].next,array[1][i][1]+1]
-				array[2] << [x,array[2][i][1]+1]
-				array[3] << [array[3][i][0].prev,array[3][i][1]+1]
-				array[4] << [array[4][i][0].prev,y]
-				array[5] << [array[5][i][0].prev,array[5][i][1]-1]
-				array[6] << [x,array[6][i][1]-1]
-				array[7] << [array[7][i][0].next,array[7][i][1]-1]
+				hash[:east] << [hash[:east][i][0].next,y]
+				hash[:northeast] << [hash[:northeast][i][0].next,hash[:northeast][i][1]+1]
+				hash[:north] << [x,hash[:north][i][1]+1]
+				hash[:northwest] << [hash[:northwest][i][0].prev,hash[:northwest][i][1]+1]
+				hash[:west] << [hash[:west][i][0].prev,y]
+				hash[:southwest] << [hash[:southwest][i][0].prev,hash[:southwest][i][1]-1]
+				hash[:south] << [x,hash[:south][i][1]-1]
+				hash[:southeast] << [hash[:southeast][i][0].next,hash[:southeast][i][1]-1]
 				i += 1
 			end
 		when :rook
-			array << [[x.next,y]]
-			array << [[x,y+1]]
-			array << [[x.prev,y]]
-			array << [[x,y-1]]
+			hash[:east] = [[x.next,y]]
+			hash[:north] = [[x,y+1]]
+			hash[:west] = [[x.prev,y]]
+			hash[:south] = [[x,y-1]]
 			i = 0
 			6.times do
-				array[0] << [array[0][i][0].next,y]
-				array[1] << [x,array[1][i][1]+1]
-				array[2] << [array[2][i][0].prev,y]
-				array[3] << [x,array[3][i][1]-1]
+				hash[:east] << [hash[:east][i][0].next,y]
+				hash[:north] << [x,hash[:north][i][1]+1]
+				hash[:west] << [hash[:west][i][0].prev,y]
+				hash[:south] << [x,hash[:south][i][1]-1]
 				i += 1
 			end
 		when :bishop
-			array << [[x.next,y+1]]
-			array << [[x.prev,y+1]]
-			array << [[x.prev,y-1]]
-			array << [[x.next,y-1]]
+			hash[:northeast] = [[x.next,y+1]]
+			hash[:northwest] = [[x.prev,y+1]]
+			hash[:southwest] = [[x.prev,y-1]]
+			hash[:southeast] = [[x.next,y-1]]
 			i = 0
 			6.times do
-				array << [array[0][i][0].next,array[0][i][1]+1]
-				array << [array[1][i][0].prev,array[1][i][1]+1]
-				array << [array[2][i][0].prev,array[2][i][1]-1]
-				array << [array[3][i][0].next,array[3][i][1]-1]
+				hash[:northeast] << [hash[:northeast][i][0].next,hash[:northeast][i][1]+1]
+				hash[:northwest] << [hash[:northwest][i][0].prev,hash[:northwest][i][1]+1]
+				hash[:southwest] << [hash[:southwest][i][0].prev,hash[:southwest][i][1]-1]
+				hash[:southeast] << [hash[:southeast][i][0].next,hash[:southeast][i][1]-1]
 				i += 1
 			end
 		when :knight
-			array << [[x.next,y+2]]
-			array << [[x.next,y-2]]
-			array << [[x.prev,y+2]]
-			array << [[x.prev,y-2]]
-			array << [[x.next.next,y+1]]
-			array << [[x.next.next,y-1]]
-			array << [[x.prev.prev,y+1]]
-			array << [[x.prev.prev,y-1]]
+			hash[:northeast] = [[x.next,y+2]]
+			hash[:southeast] = [[x.next,y-2]]
+			hash[:northwest] = [[x.prev,y+2]]
+			hash[:southwest] = [[x.prev,y-2]]
+			hash[:eastnorth] = [[x.next.next,y+1]]
+			hash[:eastsouth] = [[x.next.next,y-1]]
+			hash[:westnorth] = [[x.prev.prev,y+1]]
+			hash[:westsouth] = [[x.prev.prev,y-1]]
 		when :pawn
 			case @type
 			when :white
-				array << [[x,y+1]]
-				array << [[x.next,y+1]]
-				array << [[x.prev,y+1]]
+				hash[:forward] = [[x,y+1]]
+				hash[:diagonaleast] = [[x.next,y+1]]
+				hash[:diagonalwest] = [[x.prev,y+1]]
 			when :black
-				array << [[x,y-1]]
-				array << [[x.next,y-1]]
-				array << [[x.prev,y-1]]
+				hash[:forward] = [[x,y-1]]
+				hash[:diagonaleast] = [[x.next,y-1]]
+				hash[:diagonalwest] = [[x.prev,y-1]]
 			end
 		end
-		final_array = []
-		array.each_with_index do |moves,index|
-			final_array[index] = moves & spaces
+		final_hash = {}
+		hash.each do |direction,moves|
+			final_hash[direction] = moves & spaces
 		end
-		final_array
+		final_hash
 	end
 
 	def spaces
