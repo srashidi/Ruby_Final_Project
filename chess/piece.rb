@@ -99,7 +99,7 @@ class Piece
 			hash[:westnorth] = [[x.prev.prev,y+1]]
 			hash[:westsouth] = [[x.prev.prev,y-1]]
 		when :pawn
-			case @type
+			case @color
 			when :white
 				hash[:forward] = [[x,y+1]]
 				hash[:diagonaleast] = [[x.next,y+1]]
@@ -116,6 +116,8 @@ class Piece
 		end
 		final_hash
 	end
+
+	private
 
 	def spaces
   	array = []
