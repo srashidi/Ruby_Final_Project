@@ -3,7 +3,7 @@ class Piece
 	attr_reader :type, :color, :view
 	attr_accessor :position
 
-	def initialize(type,color,position)
+	def initialize(type,color,position,moving=false)
 		@type = type
 		@color = color
 		@position = position
