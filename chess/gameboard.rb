@@ -1,5 +1,3 @@
-require './piece'
-
 class Gameboard
 
 	attr_reader :array
@@ -8,6 +6,8 @@ class Gameboard
   def initialize
     @spaces = spaces
     @occupied_spaces = []
+=begin
+    y = 1
     (:A..:H).each do |x|
       while y < 3
         @occupied_spaces << [x,y]
@@ -19,6 +19,7 @@ class Gameboard
         y += 1
       end
     end
+=end
   end
 
   def spaces
@@ -32,10 +33,6 @@ class Gameboard
       y = 1
     end
     array
-  end
-
-  def place_piece(piece,space)
-
   end
 
 end
