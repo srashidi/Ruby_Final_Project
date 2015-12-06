@@ -1,27 +1,16 @@
 class Gameboard
 
-	attr_reader :array
+	# Makes the spaces readable and the occupied spaces accessible
+	attr_reader :spaces
 	attr_accessor :occupied_spaces
 
+	# Creates a gameboard with unoccupied spaces
   def initialize
     @spaces = spaces
     @occupied_spaces = []
-=begin
-    y = 1
-    (:A..:H).each do |x|
-      while y < 3
-        @occupied_spaces << [x,y]
-        y += 1
-      end
-			y = 7
-      while y < 9
-        @occupied_spaces << [x,y]
-        y += 1
-      end
-    end
-=end
   end
 
+	# Generates spaces for a gameboard
   def spaces
   	array = []
     y = 1

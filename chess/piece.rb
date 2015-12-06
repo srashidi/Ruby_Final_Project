@@ -1,8 +1,10 @@
 class Piece
 
+	# Make type, color, and view readable and position accessible to Chess class
 	attr_reader :type, :color, :view
 	attr_accessor :position
 
+	# Takes type, color, and position and returns all three and a view
 	def initialize(type,color,position,moving=false)
 		@type = type
 		@color = color
@@ -29,6 +31,7 @@ class Piece
 		end
 	end
 
+	# Ascertains possible moves for a piece based on type
 	def possible_moves
 		hash = {}
 		x,y = @position[0],@position[1]
@@ -119,6 +122,7 @@ class Piece
 
 	private
 
+	# Generates spaces for a gameboard
 	def spaces
   	array = []
     y = 1
@@ -136,6 +140,7 @@ end
 
 class Symbol
 
+	# Allows for symbols to be navigated in reverse alphabetical order
 	def prev
 		(self.to_s.ord - 1).chr.to_sym
 	end

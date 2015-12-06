@@ -35,6 +35,25 @@ describe Chess do
 
 	end
 
+	describe "#remove" do
+
+		before :each do
+			@chess.new_game
+		end
+
+		it "removes a piece in a given position" do
+			@chess.remove([:E,2])
+			occupied = @chess.gameboard.occupied_spaces
+			search = @chess.pieces.find { |piece| piece.position == [:E,1] }
+			expect(search).to be_truthy
+			expect(occupied.find { |space| space == [:E,1] }).to be_truthy
+			search = @chess.pieces.find { |piece| piece.position == [:E,2] }
+			expect(search).to be_nil
+			expect(occupied.find { |space| space == [:E,2] }).to be_nil
+		end
+
+	end
+
 	describe "#possible_moves" do
 
 		before :each do
@@ -42,5 +61,7 @@ describe Chess do
 		end
 
 	end
+
+
 
 end

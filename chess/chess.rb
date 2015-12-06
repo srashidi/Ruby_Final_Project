@@ -6,6 +6,7 @@ class Chess
 	def initialize
 	end
 
+	# Creates a new game of chess with a gameboard and pieces occupying spaces
 	def new_game
 		@gameboard = Gameboard.new
 		@pieces = [
@@ -29,6 +30,12 @@ class Chess
 		@pieces.each do |piece|
 			@gameboard.occupied_spaces << piece.position
 		end
+	end
+
+	# Removes a piece in the given position from the gameboard
+	def remove(position)
+		@pieces.delete_if { |piece| piece.position == position }
+		@gameboard.occupied_spaces.delete_if { |space| space == position }
 	end
 
 end
