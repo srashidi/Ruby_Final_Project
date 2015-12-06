@@ -4,6 +4,10 @@ require_relative '../piece'
 
 class Chess
 
-	attr_reader :gameboard, :pieces
+	attr_reader :test_mode, :gameboard, :pieces
+
+	def initialize(test_mode)
+		@test_mode = test_mode
+	end
 
 end

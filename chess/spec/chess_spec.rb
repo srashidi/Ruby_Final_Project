@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Chess do
 
 	before :each do
-		@chess = Chess.new
+		@chess = Chess.new(:test_mode)
 	end
 
 	it "returns a Chess object" do
@@ -13,7 +13,7 @@ describe Chess do
 	describe "#new_game" do
 
 		before :each do
-			@game = @chess.new_game
+			@chess.new_game
 		end
 
 		it "creates a new Gameboard object" do
@@ -21,20 +21,24 @@ describe Chess do
 		end
 
 		it "creates an array of Piece objects" do
-			i = 0
-			31.times do
-				expect(@chess.pieces[i]).to be_an_instance_of Piece
-				i += 1
+			@chess.pieces.each do |piece|
+				expect(piece).to be_an_instance_of Piece
 			end
 		end
 
 		it "fills the gameboard's occupied_spaces array with
 	each piece's position" do
-			i = 0
-			31.times do
-				expect(@chess.gameboard.occupied_spaces[i]).to eql @chess.pieces[i].position
-				i += 1
+			@chess.gameboard.occupied_spaces.each_with_index do |space,index|
+				expect(space).to eql @chess.pieces[index].position
 			end
+		end
+
+	end
+
+	describe "#possible_moves" do
+
+		before :each do
+
 		end
 
 	end
