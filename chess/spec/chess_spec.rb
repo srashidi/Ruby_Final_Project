@@ -98,7 +98,14 @@ describe Chess do
 	describe "#possible_moves" do
 
 		before :each do
+			@chess.new_game
+			@white_king = @chess.pieces.find { |piece| piece.color == :white && piece.type == :king }
+			@white_queen = @chess.pieces.find { |piece| piece.color == :white && piece.type == :queen }
+			@white_knight = @chess.pieces.find { |piece| piece.color == :white && piece.type == :knight }
+
 		end
+
+
 
 	end
 

@@ -59,7 +59,7 @@ describe Piece do
 			@knight = Piece.new(:knight,:white,[:B,1])
 			@rook = Piece.new(:rook,:white,[:A,1])
 			@white_pawn = Piece.new(:pawn,:white,[:H,2])
-			@black_pawn = Piece.new(:pawn,:black,[:B,7])
+			@black_pawn = Piece.new(:pawn,:black,[:B,6],true)
 		end
 
 		context "when #type is :king" do
@@ -115,18 +115,24 @@ describe Piece do
 		context "when #type is :pawn" do
 
 			context "when #color is :white" do
-				it "gives a hash of all possible moves" do
-					expect(@white_pawn.possible_moves).to eql({	forward: [[:H,3]],
-																											diagonalwest: [[:G,3]],
-																											diagonaleast: [] })
+				context "when pawn has not moved" do
+					it "gives a hash of all possible moves" do
+						expect(@white_pawn.possible_moves).to eql({	forward: [[:H,3]],
+																												twiceforward: [[:H,4]],
+																												diagonalwest: [[:G,3]],
+																												diagonaleast: [] })
+					end
 				end
 			end
 
 			context "when #color is :black" do
-				it "gives a hash of all possible moves" do
-					expect(@black_pawn.possible_moves).to eql({	forward: [[:B,6]],
-																											diagonaleast: [[:C,6]],
-																											diagonalwest: [[:A,6]] })
+				context "when pawn has moved" do
+					it "gives a hash of all possible moves" do
+						expect(@black_pawn.possible_moves).to eql({	forward: [[:B,5]],
+																												twiceforward: [],
+																												diagonaleast: [[:C,5]],
+																												diagonalwest: [[:A,5]] })
+					end
 				end
 			end
 

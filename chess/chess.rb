@@ -107,4 +107,50 @@ class Chess
 		@gameboard.occupied_spaces.delete_if { |space| space == position }
 	end
 
+	def possible_moves(piece)
+		@pieces.each do |piece|
+			case piece.type
+			when :king || :knight
+				piece.possible_moves.each do |direction,moves|
+					moves.each do |move|
+						if occupied_spaces.include?(move)
+							occupier = @pieces.find { |occupier| occupier.position == move }
+							moves.pop if occupier.color == piece.color
+						end
+					end
+				end
+			when :queen || :bishop || :rook
+				piece.possible_moves.each do |direction,moves|
+					moves.each do |move|
+						if occupied_spaces.include?(move)
+							moves.pop until moves[-1] == move
+							occupier = @pieces.find { |occupier| occupier.position == move }
+							moves.pop if occupier.color == piece.color
+						end
+					end
+				end
+			when :pawn
+				piece.possible_moves.each do |direction,moves|
+					case direction
+					when :forward || :twiceforward
+						moves.each do |move|
+							if occupied_spaces.include?(move)
+								moves.pop
+							end
+						end
+					else
+						moves.each do |move|
+							if occupied_spaces.include?(move)
+								occupier = @pieces.find { |occupier| occupier.position == move }
+								moves.pop if occupier.color == piece.color
+							else
+								moves.pop
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
 end

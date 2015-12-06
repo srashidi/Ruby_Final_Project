@@ -2,13 +2,14 @@ class Piece
 
 	# Make type, color, and view readable and position accessible to Chess class
 	attr_reader :type, :color, :view
-	attr_accessor :position
+	attr_accessor :position, :moving
 
 	# Takes type, color, and position and returns all three and a view
 	def initialize(type,color,position,moving=false)
 		@type = type
 		@color = color
 		@position = position
+		@moving = moving
 		@view = case color
 		when :white
 			case type
@@ -105,10 +106,14 @@ class Piece
 			case @color
 			when :white
 				hash[:forward] = [[x,y+1]]
+				hash[:twiceforward] = []
+				hash[:twiceforward] << [x,y+2] unless @moving
 				hash[:diagonaleast] = [[x.next,y+1]]
 				hash[:diagonalwest] = [[x.prev,y+1]]
 			when :black
 				hash[:forward] = [[x,y-1]]
+				hash[:twiceforward] = []
+				hash[:twiceforward] << [x,y-2] unless @moving
 				hash[:diagonaleast] = [[x.next,y-1]]
 				hash[:diagonalwest] = [[x.prev,y-1]]
 			end
