@@ -107,45 +107,36 @@ class Chess
 		@gameboard.occupied_spaces.delete_if { |space| space == position }
 	end
 
+	# Narrows possible moves based on pieces on the board
 	def possible_moves(piece)
-		@pieces.each do |piece|
-			case piece.type
-			when :king || :knight
-				piece.possible_moves.each do |direction,moves|
-					moves.each do |move|
-						if occupied_spaces.include?(move)
-							occupier = @pieces.find { |occupier| occupier.position == move }
-							moves.pop if occupier.color == piece.color
-						end
+		moves_hash = piece.possible_moves
+		moves_hash.each do |direction,moves|
+			moves.each do |move|
+				if piece.type == :king || piece.type == :knight
+					if @gameboard.occupied_spaces.include?(move)
+						occupier = @pieces.find { |occupier| occupier.position == move }
+						moves.pop if occupier.color == piece.color
 					end
-				end
-			when :queen || :bishop || :rook
-				piece.possible_moves.each do |direction,moves|
-					moves.each do |move|
-						if occupied_spaces.include?(move)
-							moves.pop until moves[-1] == move
-							occupier = @pieces.find { |occupier| occupier.position == move }
-							moves.pop if occupier.color == piece.color
-						end
+				elsif piece.type == :queen || piece.type == :bishop || piece.type == :rook
+					if @gameboard.occupied_spaces.include?(move)
+						moves.pop until moves[-1] == move
+						occupier = @pieces.find { |occupier| occupier.position == move }
+						moves.pop if occupier.color == piece.color
 					end
-				end
-			when :pawn
-				piece.possible_moves.each do |direction,moves|
-					case direction
-					when :forward || :twiceforward
-						moves.each do |move|
-							if occupied_spaces.include?(move)
-								moves.pop
-							end
+				elsif piece.type == :pawn
+					if direction == :forward
+						if @gameboard.occupied_spaces.include?(move)
+							moves.pop
+							moves_hash[:twiceforward].pop
 						end
+					elsif direction == :twiceforward
+						moves.pop if @gameboard.occupied_spaces.include?(move)
 					else
-						moves.each do |move|
-							if occupied_spaces.include?(move)
-								occupier = @pieces.find { |occupier| occupier.position == move }
-								moves.pop if occupier.color == piece.color
-							else
-								moves.pop
-							end
+						if @gameboard.occupied_spaces.include?(move)
+							occupier = @pieces.find { |occupier| occupier.position == move }
+							moves.pop if occupier.color == piece.color
+						else
+							moves.pop
 						end
 					end
 				end
