@@ -54,10 +54,50 @@ describe Chess do
 
 	end
 
+	describe "#display" do
+
+		before :each do
+			@chess.new_game
+		end
+
+		it "shows the gameboard and the pieces in correct positions" do
+			white_king = "\u{2654}"
+			white_queen = "\u{2655}"
+			white_bishop = "\u{2657}"
+			white_knight = "\u{2658}"
+			white_rook = "\u{2656}"
+			white_pawn = "\u{2659}"
+			black_king = "\u{265A}"
+			black_queen = "\u{265B}"
+			black_bishop = "\u{265D}"
+			black_knight = "\u{265E}"
+			black_rook = "\u{265C}"
+			black_pawn = "\u{265F}"
+			expect(STDOUT).to receive(:puts).with("_________________________________________")
+			expect(STDOUT).to receive(:puts).with("| #{black_rook}  | #{black_knight}  | #{black_bishop}  | #{black_queen}  | #{black_king}  | #{black_bishop}  | #{black_knight}  | #{black_rook}  |")
+			expect(STDOUT).to receive(:puts).with("_________________________________________")
+			expect(STDOUT).to receive(:puts).with("| #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  |")
+			expect(STDOUT).to receive(:puts).with("_________________________________________")
+			expect(STDOUT).to receive(:puts).with("|    |    |    |    |    |    |    |    |")
+			expect(STDOUT).to receive(:puts).with("_________________________________________")
+			expect(STDOUT).to receive(:puts).with("|    |    |    |    |    |    |    |    |")
+			expect(STDOUT).to receive(:puts).with("_________________________________________")
+			expect(STDOUT).to receive(:puts).with("|    |    |    |    |    |    |    |    |")
+			expect(STDOUT).to receive(:puts).with("_________________________________________")
+			expect(STDOUT).to receive(:puts).with("|    |    |    |    |    |    |    |    |")
+			expect(STDOUT).to receive(:puts).with("_________________________________________")
+			expect(STDOUT).to receive(:puts).with("| #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  |")
+			expect(STDOUT).to receive(:puts).with("_________________________________________")
+			expect(STDOUT).to receive(:puts).with("| #{white_rook}  | #{white_knight}  | #{white_bishop}  | #{white_queen}  | #{white_king}  | #{white_bishop}  | #{white_knight}  | #{white_rook}  |")
+			expect(STDOUT).to receive(:puts).with("_________________________________________")
+			@chess.display
+		end
+
+	end
+
 	describe "#possible_moves" do
 
 		before :each do
-
 		end
 
 	end
