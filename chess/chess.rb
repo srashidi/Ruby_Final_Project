@@ -102,12 +102,12 @@ class Chess
 	end
 
 	# Removes a piece in the given position from the gameboard
-	def remove(position)
+	def remove_piece(position)
 		@pieces.delete_if { |piece| piece.position == position }
 		@gameboard.occupied_spaces.delete_if { |space| space == position }
 	end
 
-	# Narrows possible moves based on pieces on the board
+	# Narrows possible moves based on position of all pieces on the board
 	def possible_moves(piece)
 		moves_hash = piece.possible_moves
 		moves_hash.each do |direction,moves|
@@ -141,6 +141,31 @@ class Chess
 					end
 				end
 			end
+		end
+		moves_hash.values.flatten(1)
+	end
+
+	# Moves a piece in a given position to another given position
+	# if it is a possible move
+	def move_piece(old_position,new_position)
+		piece = @pieces.find { |current_piece| current_piece.position == old_position }
+		occupier = @pieces.find { |current_piece| current_piece.position == new_position }
+		if possible_moves(piece).include?(new_position)
+			if occupier
+				puts ""
+				string = occupier.type == :queen ? "The " : "A "
+				puts string + "#{occupier.name} has been captured!"
+				puts ""
+				remove_piece(occupier.position)
+			end
+			@gameboard.occupied_spaces.delete_if { |space| space == old_position }
+			@gameboard.occupied_spaces << new_position
+			piece.position = new_position
+		else
+			puts ""
+			puts "Error: Invalid move! Try again..."
+			puts ""
+			:invalid_move
 		end
 	end
 

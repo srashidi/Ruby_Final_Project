@@ -1,7 +1,7 @@
 class Piece
 
 	# Make type, color, and view readable and position accessible to Chess class
-	attr_reader :type, :color, :view
+	attr_reader :type, :color
 	attr_accessor :position, :moving
 
 	# Takes type, color, and position and returns all three and a view
@@ -10,9 +10,12 @@ class Piece
 		@color = color
 		@position = position
 		@moving = moving
-		@view = case color
+	end
+
+	def view
+		case @color
 		when :white
-			case type
+			case @type
 			when :king then "\u{2654}"
 			when :queen then "\u{2655}"
 			when :rook then "\u{2656}"
@@ -21,7 +24,7 @@ class Piece
 			when :pawn then "\u{2659}"
 			end
 		when :black
-			case type
+			case @type
 			when :king then "\u{265A}"
 			when :queen then "\u{265B}"
 			when :rook then "\u{265C}"
@@ -30,6 +33,10 @@ class Piece
 			when :pawn then "\u{265F}"
 			end
 		end
+	end
+
+	def name
+		@color.to_s + " " + @type.to_s
 	end
 
 	# Ascertains possible moves for a piece based on type

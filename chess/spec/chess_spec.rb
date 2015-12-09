@@ -35,14 +35,14 @@ describe Chess do
 
 	end
 
-	describe "#remove" do
+	describe "#remove_piece" do
 
 		before :each do
 			@chess.new_game
 		end
 
 		it "removes a piece in a given position" do
-			@chess.remove([:E,2])
+			@chess.remove_piece([:E,2])
 			occupied = @chess.gameboard.occupied_spaces
 			search = @chess.pieces.find { |piece| piece.position == [:E,1] }
 			expect(search).to be_truthy
@@ -113,23 +113,16 @@ describe Chess do
 
 			context "when completely surrounded by pieces of the same color" do
 				it "gives a hash indicating no possible moves" do
-					expect(@chess.possible_moves(@white_king)).to eql ({ east: [], northeast: [],
-																								north: [], northwest: [],
-																								west: [], southwest: [],
-																								south: [], southeast: [] })
-					expect(@chess.possible_moves(@white_queen)).to eql ({ east: [], northeast: [],
-																								north: [], northwest: [],
-																								west: [], southwest: [],
-																								south: [], southeast: [] })
+					expect(@chess.possible_moves(@white_king)).to be_empty
+					expect(@chess.possible_moves(@white_queen)).to be_empty
 				end
 			end
 
 			context "when not surrounded" do
 				it "gives a hash of possible moves" do
-					expect(@chess.possible_moves(@new_black_bishop)).to eql({northeast: [[:D,4],[:E,5],[:F,6]],
-																																	 northwest: [[:B,4],[:A,5]],
-																																	 southeast: [[:D,2]],
-																																	 southwest: [[:B,2]]})
+					expect(@chess.possible_moves(@new_black_bishop)).to include([:D,4],[:E,5],[:F,6],
+																																	 [:B,4],[:A,5],[:D,2],
+																																	 [:B,2])
 				end
 			end
 
@@ -138,10 +131,7 @@ describe Chess do
 		context "with a knight" do
 			context "when completely surrounded by pieces of the same color" do
 				it "gives a hash of possible moves" do
-					expect(@chess.possible_moves(@white_knight)).to eql({northeast: [[:H,3]], northwest: [[:F,3]],
-																															 eastnorth: [], westnorth: [],
-																															 southeast: [], southwest: [],
-																															 eastsouth: [], westsouth: [] })
+					expect(@chess.possible_moves(@white_knight)).to include([:H,3],[:F,3])
 				end
 			end
 		end
@@ -150,19 +140,13 @@ describe Chess do
 
 			context "when a piece is in front of it and nothing is diagonal" do
 				it "gives a hash indicating no possible moves" do
-					expect(@chess.possible_moves(@white_pawn_C)).to eql({	forward: [],
-																																twiceforward: [],
-																																diagonalwest: [],
-																																diagonaleast: [] })
+					expect(@chess.possible_moves(@white_pawn_C)).to be_empty
 				end
 			end
 
 			context "when no piece is in front of it and an opponent is diagonal" do
 				it "gives a hash of possible moves" do
-					expect(@chess.possible_moves(@white_pawn_B)).to eql({	forward: [[:B,3]],
-																																twiceforward: [[:B,4]],
-																																diagonalwest: [],
-																																diagonaleast: [[:C,3]] })
+					expect(@chess.possible_moves(@white_pawn_B)).to include([:B,3],[:B,4],[:C,3])
 				end
 			end
 
@@ -170,6 +154,71 @@ describe Chess do
 
 	end
 
+	describe "#move_piece" do
 
+		before :each do
+			@chess.new_game
+			@white_queen = @chess.pieces.find { |piece| piece.color == :white && piece.type == :queen }
+			@white_knight = @chess.pieces.find { |piece| piece.color == :white && piece.type == :knight && piece.position == [:G,1] }
+			@black_pawn = @chess.pieces.find { |piece| piece.color == :black && piece.type == :pawn && piece.position == [:E,7] }
+		end
+
+		context "when move is possible" do
+
+			before :each do
+				@chess.move_piece( @white_knight.position, [:F,3] )
+			end
+
+			it "moves the white knight" do
+				expect(@white_knight.position).to eql [:F,3]
+				occupied = @chess.gameboard.occupied_spaces
+				search = @chess.pieces.find { |piece| piece.position == [:F,3] }
+				expect(search).to be_truthy
+				expect(occupied.find { |space| space == [:F,3] }).to be_truthy
+				search = @chess.pieces.find { |piece| piece.position == [:G,1] }
+				expect(search).to be_nil
+				expect(occupied.find { |space| space == [:G,1] }).to be_nil
+			end
+
+			context "when new position is occupied by an opposing piece" do
+
+				before :each do
+					@chess.move_piece( @black_pawn.position, [:E,5] )
+				end
+
+				it "removes the opposing piece and replaces it with the moving piece" do
+					expect(STDOUT).to receive(:puts).with("")
+					expect(STDOUT).to receive(:puts).with("A black pawn has been captured!")
+					expect(STDOUT).to receive(:puts).with("")
+					@chess.move_piece( @white_knight.position, @black_pawn.position )
+					expect(@chess.pieces.count(@black_pawn)).to eql 0
+					expect(@white_knight.position).to eql [:E,5]
+					occupied = @chess.gameboard.occupied_spaces
+					search = @chess.pieces.find { |piece| piece.position == [:E,5] }
+					expect(search).to be_truthy
+					expect(occupied.find { |space| space == [:E,5] }).to be_truthy
+					expect(occupied.count([:E,5])).to eql 1
+					search = @chess.pieces.find { |piece| piece.position == [:F,3] }
+					expect(search).to be_nil
+					expect(occupied.find { |space| space == [:F,3] }).to be_nil
+				end
+
+			end
+
+		end
+
+		context "when move is not possible" do
+
+			it "returns an invalid_move symbol" do
+				expect(STDOUT).to receive(:puts).with("")
+				expect(STDOUT).to receive(:puts).with("Error: Invalid move! Try again...")
+				expect(STDOUT).to receive(:puts).with("")
+				move = @chess.move_piece( @white_queen.position, [:D,3] )
+				expect(move).to eql :invalid_move
+			end
+
+		end
+
+	end
 
 end

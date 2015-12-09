@@ -51,6 +51,29 @@ describe Piece do
 
 	end
 
+	describe "#name" do
+
+		before :each do
+			@white_queen = Piece.new(:queen,:white,[:D,1])
+			@black_bishop = Piece.new(:bishop,:black,[:C,8])
+			@white_knight = Piece.new(:knight,:white,[:B,1])
+			@black_rook = Piece.new(:rook,:black,[:A,8])
+			@white_pawn = Piece.new(:pawn,:white,[:H,2])
+			@black_pawn = Piece.new(:pawn,:black,[:B,6],true)
+		end
+
+		it "returns a string identifying the color and type of the given piece" do
+			expect(@king.name).to eql "white king"
+			expect(@white_queen.name).to eql "white queen"
+			expect(@black_bishop.name).to eql "black bishop"
+			expect(@white_knight.name).to eql "white knight"
+			expect(@black_rook.name).to eql "black rook"
+			expect(@white_pawn.name).to eql "white pawn"
+			expect(@black_pawn.name).to eql "black pawn"
+		end
+
+	end
+
 	describe "#possible_moves" do
 
 		before :each do
