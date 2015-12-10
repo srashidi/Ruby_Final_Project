@@ -35,11 +35,7 @@ class Piece
 		end
 	end
 
-	def name
-		@color.to_s + " " + @type.to_s
-	end
-
-	# Ascertains possible moves for a piece based on type
+	# Ascertains possible moves for the piece based on type
 	def possible_moves
 		hash = {}
 		x,y = @position[0],@position[1]

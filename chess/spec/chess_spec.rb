@@ -95,6 +95,67 @@ describe Chess do
 
 	end
 
+	describe "#move_input" do
+
+		before :each do
+			@chess.new_game
+			@white_queen = @chess.pieces.find { |piece| piece.color == :white && piece.type == :queen }
+			@white_knight = @chess.pieces.find { |piece| piece.color == :white && piece.type == :knight && piece.position == [:G,1] }
+			@black_pawn = @chess.pieces.find { |piece| piece.color == :black && piece.type == :pawn && piece.position == [:E,7] }
+		end
+
+		context "with valid move input" do
+
+			before :each do
+				expect(STDOUT).to receive(:puts).with("")
+				expect(STDOUT).to receive(:puts).with("Choose the position of the piece you want to move:")
+			end
+
+			context "when move is possible" do
+
+				before :each do
+					expect(STDOUT).to receive(:puts).with("")
+					expect(STDOUT).to receive(:puts).with("Choose which position to move your knight:")
+				end
+
+				it "moves the piece in the initial position to the new position" do
+					@chess.move_input("G1","F3")
+					expect(@white_knight.position).to eql [:F,3]
+					occupied = @chess.gameboard.occupied_spaces
+					search = @chess.pieces.find { |piece| piece.position == [:F,3] }
+					expect(search).to be_truthy
+					expect(occupied.find { |space| space == [:F,3] }).to be_truthy
+					search = @chess.pieces.find { |piece| piece.position == [:G,1] }
+					expect(search).to be_nil
+					expect(occupied.find { |space| space == [:G,1] }).to be_nil
+				end
+
+			end
+
+			context "when move is not possible" do
+
+				before :each do
+					expect(STDOUT).to receive(:puts).with("")
+					expect(STDOUT).to receive(:puts).with("Choose which position to move your queen:")
+				end
+
+				it "gives an error message" do
+					expect(STDOUT).to receive(:puts).with("")
+					expect(STDOUT).to receive(:puts).with("Error: Invalid move! Try again...")
+					expect(STDOUT).to receive(:puts).with("")
+					@chess.move_input("D1","D4")
+					expect(@white_queen.position).to eql [:D,1]
+				end
+
+			end
+
+		end
+
+		context "with " do
+		end
+
+	end
+
 	describe "#possible_moves" do
 
 		before :each do
@@ -169,7 +230,7 @@ describe Chess do
 				@chess.move_piece( @white_knight.position, [:F,3] )
 			end
 
-			it "moves the white knight" do
+			it "moves the piece in the initial position to the new position" do
 				expect(@white_knight.position).to eql [:F,3]
 				occupied = @chess.gameboard.occupied_spaces
 				search = @chess.pieces.find { |piece| piece.position == [:F,3] }
@@ -209,12 +270,12 @@ describe Chess do
 
 		context "when move is not possible" do
 
+			before :each do
+				@move = @chess.move_piece( @white_queen.position, [:D,3] )
+			end
+
 			it "returns an invalid_move symbol" do
-				expect(STDOUT).to receive(:puts).with("")
-				expect(STDOUT).to receive(:puts).with("Error: Invalid move! Try again...")
-				expect(STDOUT).to receive(:puts).with("")
-				move = @chess.move_piece( @white_queen.position, [:D,3] )
-				expect(move).to eql :invalid_move
+				expect(@move).to eql :invalid_move
 			end
 
 		end

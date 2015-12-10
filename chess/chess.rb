@@ -101,6 +101,19 @@ class Chess
 
 	end
 
+	def move_input
+		puts ""
+		puts "Choose the position of the piece you want to move:"
+		initial_position = gets.chomp.upcase.gsub(/\s+/,"").split("")
+		initial_position = [initial_position[0].to_sym,initial_position[1].to_i]
+		piece = @pieces.find { |current_piece| current_piece.position == initial_position }
+		puts ""
+		puts "Choose which position to move your #{piece.type}:"
+		new_position = gets.chomp.upcase.gsub(/\s+/,"").split("")
+		new_position = [new_position[0].to_sym,new_position[1].to_i]
+		move_piece(initial_position,new_position)
+	end
+
 	# Removes a piece in the given position from the gameboard
 	def remove_piece(position)
 		@pieces.delete_if { |piece| piece.position == position }
@@ -147,24 +160,21 @@ class Chess
 
 	# Moves a piece in a given position to another given position
 	# if it is a possible move
-	def move_piece(old_position,new_position)
-		piece = @pieces.find { |current_piece| current_piece.position == old_position }
+	def move_piece(initial_position,new_position)
+		piece = @pieces.find { |current_piece| current_piece.position == initial_position }
 		occupier = @pieces.find { |current_piece| current_piece.position == new_position }
 		if possible_moves(piece).include?(new_position)
 			if occupier
 				puts ""
 				string = occupier.type == :queen ? "The " : "A "
-				puts string + "#{occupier.name} has been captured!"
+				puts string + "#{occupier.color} #{occupier.type} has been captured!"
 				puts ""
 				remove_piece(occupier.position)
 			end
-			@gameboard.occupied_spaces.delete_if { |space| space == old_position }
+			@gameboard.occupied_spaces.delete_if { |space| space == initial_position }
 			@gameboard.occupied_spaces << new_position
 			piece.position = new_position
 		else
-			puts ""
-			puts "Error: Invalid move! Try again..."
-			puts ""
 			:invalid_move
 		end
 	end
