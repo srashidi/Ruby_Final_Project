@@ -101,17 +101,26 @@ class Chess
 
 	end
 
-	def move_input
+	def move_input(color)
 		puts ""
 		puts "Choose the position of the piece you want to move:"
 		initial_position = gets.chomp.upcase.gsub(/\s+/,"").split("")
 		initial_position = [initial_position[0].to_sym,initial_position[1].to_i]
 		piece = @pieces.find { |current_piece| current_piece.position == initial_position }
-		puts ""
-		puts "Choose which position to move your #{piece.type}:"
-		new_position = gets.chomp.upcase.gsub(/\s+/,"").split("")
-		new_position = [new_position[0].to_sym,new_position[1].to_i]
-		move_piece(initial_position,new_position)
+		if piece != nil && piece.color == color
+			puts ""
+			puts "Choose which position to move your #{piece.type}:"
+			new_position = gets.chomp.upcase.gsub(/\s+/,"").split("")
+			new_position = [new_position[0].to_sym,new_position[1].to_i]
+			move_piece(initial_position,new_position)
+		else
+			move = :invalid_move
+		end
+		if move == :invalid_move
+			puts ""
+			puts "Error: Invalid move! Try again..."
+			puts ""
+		end
 	end
 
 	# Removes a piece in the given position from the gameboard
