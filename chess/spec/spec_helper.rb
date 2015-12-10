@@ -43,26 +43,30 @@ class Chess
 
 	# Initiates move input
 	def move_input(initial_position,new_position,color,*new_input)
-		move = initial_position_input(initial_position,new_position,color,new_input)
-		if move == :invalid_move
-			puts ""
-			puts "Error: Invalid move! Try again..."
-			puts ""
-		end
-		move
+		initial_position_input(initial_position,new_position,color,new_input)
 	end
 
 	# Takes user input for the initial position
 	def initial_position_input(initial_position,new_position,color,*new_input)
 		puts ""
 		puts "Choose the position of the piece you want to move:"
-		initial_position = initial_position.upcase.gsub(/\s+/,"").split("")
-		initial_position = [initial_position[0].to_sym,initial_position[1].to_i]
-		piece = @pieces.find { |current_piece| current_piece.position == initial_position }
-		if piece != nil && piece.color == color && possible_moves(piece) != []
-			move = new_position_input(initial_position,new_position,color,piece,new_input[0])
+		initial_position = initial_position.upcase.gsub(/\s+/,"")
+		move = case initial_position
+		when "HELP"
+			:help
+		when "SAVE"
+			:save
+		when "EXIT"
+			:exit
 		else
-			move = :invalid_move
+			initial_position = initial_position.split("")
+			initial_position = [initial_position[0].to_sym,initial_position[1].to_i]
+			piece = @pieces.find { |current_piece| current_piece.position == initial_position }
+			if piece != nil && piece.color == color && possible_moves(piece) != []
+				move = new_position_input(initial_position,new_position,color,piece,new_input[0])
+			else
+				move = :invalid_move
+			end
 		end
 		move
 	end
@@ -72,13 +76,23 @@ class Chess
 		puts ""
 		puts "Choose which position to move your #{piece.type},"
 		puts "or choose a different piece by inputting its position:"
-		new_position = new_position.upcase.gsub(/\s+/,"").split("")
-		new_position = [new_position[0].to_sym,new_position[1].to_i]
-		piece = @pieces.find { |current_piece| current_piece.position == new_position }
-		if piece != nil && piece.color == color && possible_moves(piece) != []
-			new_position_input(new_position,new_input.flatten[0],color,piece)
+		new_position = new_position.upcase.gsub(/\s+/,"")
+		move = case initial_position
+		when "HELP"
+			:help
+		when "SAVE"
+			:save
+		when "EXIT"
+			:exit
 		else
-			move = move_piece(initial_position,new_position)
+			new_position = new_position.split("")
+			new_position = [new_position[0].to_sym,new_position[1].to_i]
+			piece = @pieces.find { |current_piece| current_piece.position == new_position }
+			if piece != nil && piece.color == color && possible_moves(piece) != []
+				new_position_input(new_position,new_input.flatten[0],color,piece)
+			else
+				move = move_piece(initial_position,new_position)
+			end
 		end
 		move
 	end

@@ -194,24 +194,20 @@ describe Chess do
 
 				context "when choosing a piece of the correct color" do
 
-					it "gives an error message" do
-						expect(STDOUT).to receive(:puts).with("")
-						expect(STDOUT).to receive(:puts).with("Error: Invalid move! Try again...")
-						expect(STDOUT).to receive(:puts).with("")
-						@chess.move_input("D1","D4",:white)
+					it "returns an error symbol" do
+						move = @chess.move_input("D1","D4",:white)
 						expect(@white_queen.position).to eql [:D,1]
+						expect(move).to eql :invalid_move
 					end
 
 				end
 
 				context "when choosing a piece of the incorrect color" do
 
-					it "gives an error message" do
-						expect(STDOUT).to receive(:puts).with("")
-						expect(STDOUT).to receive(:puts).with("Error: Invalid move! Try again...")
-						expect(STDOUT).to receive(:puts).with("")
-						@chess.move_input("E7","E6",:white)
+					it "returns an error symbol" do
+						move = @chess.move_input("E7","E6",:white)
 						expect(@black_pawn.position).to eql [:E,7]
+						expect(move).to eql :invalid_move
 					end
 
 				end
@@ -224,12 +220,10 @@ describe Chess do
 
 			context "for the initial position" do
 
-				it "gives an error message" do
-					expect(STDOUT).to receive(:puts).with("")
-					expect(STDOUT).to receive(:puts).with("Error: Invalid move! Try again...")
-					expect(STDOUT).to receive(:puts).with("")
-					@chess.move_input("1G","F3",:white)
+				it "returns an error symbol" do
+					move = @chess.move_input("1G","F3",:white)
 					expect(@white_knight.position).to eql [:G,1]
+					expect(move).to eql :invalid_move
 				end
 
 			end
@@ -242,12 +236,10 @@ describe Chess do
 					expect(STDOUT).to receive(:puts).with("or choose a different piece by inputting its position:")
 				end
 
-				it "gives an error message" do
-					expect(STDOUT).to receive(:puts).with("")
-					expect(STDOUT).to receive(:puts).with("Error: Invalid move! Try again...")
-					expect(STDOUT).to receive(:puts).with("")
-					@chess.move_input("G1","3F",:white)
+				it "returns an error symbol" do
+					move = @chess.move_input("G1","3F",:white)
 					expect(@white_knight.position).to eql [:G,1]
+					expect(move).to eql :invalid_move
 				end
 
 

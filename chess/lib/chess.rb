@@ -1,6 +1,7 @@
 require_relative './gameboard'
 require_relative './piece'
 
+require 'yaml'
 require 'launchy'
 
 class Chess
@@ -17,10 +18,10 @@ class Chess
 
 	# Initializes new game or saved game
 	def initialize(*saved_info)
-		if p.nil?
+		if saved_info.nil?
 			new_game
 		else
-			load_game
+			load_game(saved_info)
 		end
 	end
 
@@ -58,15 +59,25 @@ class Chess
 		turn(:white)
 	end
 
-	def load_game
+	def load_game(saved_info)
 	end
 
-	def save_game
+	def save_game(player_colorcolor)
+		File.open("saved_games.yaml", "a") do |out|
+      YAML::dump([@gameboard,@pieces,player_color], out)
+    end
 	end
 
 	def help
 		Launchy.open("https://en.wikipedia.org/wiki/Chess#Rules")
 		puts ""
+		puts "An explanation of the rules of chess has been opened on"
+		puts "your default browser."
+		puts "During the game, you can \"save\" your game and exit,"
+		puts "\"exit\" the game without saving, or ask for \"help\"."
+		puts ""
+		puts "Press ENTER when you are ready to continue."
+		gets
 	end
 
 	def turn(player_color)
@@ -77,8 +88,26 @@ class Chess
 		move = move_input(player_color)
 		turn(player_color) if move == :invalid_move
 		puts ""
-		turn(:black) if player_color == :white
-		turn(:white) if player_color == :black
+		case move
+		when :help
+			help
+			turn(player_color)
+		when :save
+			save_game(player_color)
+			puts "Game saved!"
+			puts "Goodbye!"
+			puts ""
+		when :exit
+			puts "Goodbye!"
+			puts ""
+		when :invalid_move
+			puts "Error: Invalid move! Try again..."
+			puts ""
+			turn(player_color)
+		else
+			turn(:black) if player_color == :white
+			turn(:white) if player_color == :black
+		end
 	end
 
 	# Displays the current gameboard and pieces
@@ -143,26 +172,30 @@ class Chess
 
 	# Initiates move input
 	def move_input(color)
-		move = initial_position_input(color)
-		if move == :invalid_move
-			puts ""
-			puts "Error: Invalid move! Try again..."
-			puts ""
-		end
-		move
+		initial_position_input(color)
 	end
 
 	# Takes user input for the initial position
 	def initial_position_input(color)
 		puts ""
 		puts "Choose the position of the piece you want to move:"
-		initial_position = gets.chomp.upcase.gsub(/\s+/,"").split("")
-		initial_position = [initial_position[0].to_sym,initial_position[1].to_i]
-		piece = @pieces.find { |current_piece| current_piece.position == initial_position }
-		if piece != nil && piece.color == color && possible_moves(piece) != []
-			move = new_position_input(piece)
+		initial_position = gets.chomp.upcase.gsub(/\s+/,"")
+		move = case initial_position
+		when "HELP"
+			:help
+		when "SAVE"
+			:save
+		when "EXIT"
+			:exit
 		else
-			move = :invalid_move
+			initial_position = initial_position.split("")
+			initial_position = [initial_position[0].to_sym,initial_position[1].to_i]
+			piece = @pieces.find { |current_piece| current_piece.position == initial_position }
+			if piece != nil && piece.color == color && possible_moves(piece) != []
+				move = new_position_input(piece)
+			else
+				move = :invalid_move
+			end
 		end
 		move
 	end
@@ -172,15 +205,29 @@ class Chess
 		puts ""
 		puts "Choose which position to move your #{piece.type},"
 		puts "or choose a different piece by inputting its position:"
-		new_position = gets.chomp.upcase.gsub(/\s+/,"").split("")
-		new_position = [new_position[0].to_sym,new_position[1].to_i]
-		piece = @pieces.find { |current_piece| current_piece.position == new_position }
-		if piece != nil && piece.color == color && possible_moves(piece) != []
-			new_position_input(color,piece)
+		new_position = gets.chomp.upcase.gsub(/\s+/,"")
+		case initial_position
+		when "HELP"
+			:help
+		when "SAVE"
+			:save
+		when "EXIT"
+			:exit
 		else
-			move = move_piece(initial_position,new_position)
+			new_position = new_position.split("")
+			new_position = [new_position[0].to_sym,new_position[1].to_i]
+			piece = @pieces.find { |current_piece| current_piece.position == new_position }
+			if piece != nil && piece.color == color && possible_moves(piece) != []
+				new_position_input(color,piece)
+			else
+				move = move_piece(initial_position,new_position)
+			end
 		end
 		move
+	end
+
+	def other_input_options(input)
+
 	end
 
 	# Removes a piece in the given position from the gameboard

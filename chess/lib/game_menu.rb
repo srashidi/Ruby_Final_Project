@@ -15,7 +15,7 @@ class GameMenu
 		when 1
 			Chess.new
 		when 2
-			load_game
+			Chess.new.load_game
 		when 3
 			puts "Goodbye!"
 		else
