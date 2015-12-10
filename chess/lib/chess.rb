@@ -1,8 +1,11 @@
-require './gameboard'
-require './piece'
+require_relative './gameboard'
+require_relative './piece'
+
+require 'launchy'
 
 class Chess
 
+	# Position for each column in the string
 	A = 2
 	B = 7
 	C = 12
@@ -12,7 +15,13 @@ class Chess
 	G = 32
 	H = 37
 
-	def initialize
+	# Initializes new game or saved game
+	def initialize(*saved_info)
+		if p.nil?
+			new_game
+		else
+			load_game
+		end
 	end
 
 	# Creates a new game of chess with a gameboard and pieces occupying spaces
@@ -39,6 +48,25 @@ class Chess
 		@pieces.each do |piece|
 			@gameboard.occupied_spaces << piece.position
 		end
+		puts "You have started a new game of chess!"
+		puts "Each player will take turns, starting with"
+		puts "white, and whoever can put the other"
+		puts "player's king in checkmate wins!"
+		puts ""
+		puts "During the game, you can \"save\" your game and exit,"
+		puts "\"exit\" the game without saving, or ask for \"help\"."
+		turn(:white)
+	end
+
+	def load_game
+	end
+
+	def save_game
+	end
+
+	def help
+		Launchy.open("https://en.wikipedia.org/wiki/Chess#Rules")
+		puts ""
 	end
 
 	def turn(player_color)
@@ -113,25 +141,44 @@ class Chess
 		puts "    A    B    C    D     E    F    G    H  "
 	end
 
+	# Initiates move input
 	def move_input(color)
+		move = initial_position_input(color)
+		if move == :invalid_move
+			puts ""
+			puts "Error: Invalid move! Try again..."
+			puts ""
+		end
+		move
+	end
+
+	# Takes user input for the initial position
+	def initial_position_input(color)
 		puts ""
 		puts "Choose the position of the piece you want to move:"
 		initial_position = gets.chomp.upcase.gsub(/\s+/,"").split("")
 		initial_position = [initial_position[0].to_sym,initial_position[1].to_i]
 		piece = @pieces.find { |current_piece| current_piece.position == initial_position }
 		if piece != nil && piece.color == color && possible_moves(piece) != []
-			puts ""
-			puts "Choose which position to move your #{piece.type}:"
-			new_position = gets.chomp.upcase.gsub(/\s+/,"").split("")
-			new_position = [new_position[0].to_sym,new_position[1].to_i]
-			move = move_piece(initial_position,new_position)
+			move = new_position_input(piece)
 		else
 			move = :invalid_move
 		end
-		if move == :invalid_move
-			puts ""
-			puts "Error: Invalid move! Try again..."
-			puts ""
+		move
+	end
+
+	# Take user input for the new position
+	def new_position_input(color,piece)
+		puts ""
+		puts "Choose which position to move your #{piece.type},"
+		puts "or choose a different piece by inputting its position:"
+		new_position = gets.chomp.upcase.gsub(/\s+/,"").split("")
+		new_position = [new_position[0].to_sym,new_position[1].to_i]
+		piece = @pieces.find { |current_piece| current_piece.position == new_position }
+		if piece != nil && piece.color == color && possible_moves(piece) != []
+			new_position_input(color,piece)
+		else
+			move = move_piece(initial_position,new_position)
 		end
 		move
 	end

@@ -103,6 +103,7 @@ describe Chess do
 			@white_queen = @chess.pieces.find { |piece| piece.color == :white && piece.type == :queen }
 			@white_knight = @chess.pieces.find { |piece| piece.color == :white && piece.type == :knight && piece.position == [:G,1] }
 			@black_pawn = @chess.pieces.find { |piece| piece.color == :black && piece.type == :pawn && piece.position == [:E,7] }
+			@white_pawn = @chess.pieces.find { |piece| piece.color == :white && piece.type == :pawn && piece.position == [:F,2] }
 			expect(STDOUT).to receive(:puts).with("")
 			expect(STDOUT).to receive(:puts).with("Choose the position of the piece you want to move:")
 		end
@@ -113,7 +114,8 @@ describe Chess do
 
 				before :each do
 					expect(STDOUT).to receive(:puts).with("")
-					expect(STDOUT).to receive(:puts).with("Choose which position to move your knight:")
+					expect(STDOUT).to receive(:puts).with("Choose which position to move your knight,")
+					expect(STDOUT).to receive(:puts).with("or choose a different piece by inputting its position:")
 				end
 
 				it "moves the piece in the initial position to the new position" do
@@ -158,6 +160,32 @@ describe Chess do
 						expect(occupied.find { |space| space == [:G,1] }).to be_nil
 					end
 
+				end
+
+			end
+
+			context "when a different piece is chosen to move" do
+
+				it "moves that piece instead" do
+					expect(STDOUT).to receive(:puts).with("")
+					expect(STDOUT).to receive(:puts).with("Choose which position to move your knight,")
+					expect(STDOUT).to receive(:puts).with("or choose a different piece by inputting its position:")
+					expect(STDOUT).to receive(:puts).with("")
+					expect(STDOUT).to receive(:puts).with("Choose which position to move your pawn,")
+					expect(STDOUT).to receive(:puts).with("or choose a different piece by inputting its position:")
+					@chess.move_input("G1","F2",:white,"F3")
+					expect(@white_knight.position).to eql [:G,1]
+					expect(@white_pawn.position).to eql [:F,3]
+					occupied = @chess.gameboard.occupied_spaces
+					search = @chess.pieces.find { |piece| piece.position == [:G,1] }
+					expect(search).to be_truthy
+					expect(occupied.find { |space| space == [:G,1] }).to be_truthy
+					search = @chess.pieces.find { |piece| piece.position == [:F,3] }
+					expect(search).to be_truthy
+					expect(occupied.find { |space| space == [:F,3] }).to be_truthy
+					search = @chess.pieces.find { |piece| piece.position == [:F,2] }
+					expect(search).to be_nil
+					expect(occupied.find { |space| space == [:F,2] }).to be_nil
 				end
 
 			end
@@ -210,7 +238,8 @@ describe Chess do
 
 				before :each do
 					expect(STDOUT).to receive(:puts).with("")
-					expect(STDOUT).to receive(:puts).with("Choose which position to move your knight:")
+					expect(STDOUT).to receive(:puts).with("Choose which position to move your knight,")
+					expect(STDOUT).to receive(:puts).with("or choose a different piece by inputting its position:")
 				end
 
 				it "gives an error message" do
