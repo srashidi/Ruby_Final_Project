@@ -15,13 +15,16 @@ class GameMenu
 		when 1
 			Chess.new
 		when 2
-			Chess.new.load_game
+			load_menu
 		when 3
 			puts "Goodbye!"
 		else
 			puts "Error: Invalid input! Try again..."
 			initialize
 		end
+	end
+
+	def load_menu
 	end
 
 end

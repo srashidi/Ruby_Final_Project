@@ -18,7 +18,7 @@ class Chess
 
 	# Initializes new game or saved game
 	def initialize(*saved_info)
-		if saved_info.nil?
+		if saved_info.empty?
 			new_game
 		else
 			load_game(saved_info)
@@ -56,6 +56,7 @@ class Chess
 		puts ""
 		puts "During the game, you can \"save\" your game and exit,"
 		puts "\"exit\" the game without saving, or ask for \"help\"."
+		enter_to_continue
 		turn(:white)
 	end
 
@@ -75,9 +76,7 @@ class Chess
 		puts "your default browser."
 		puts "During the game, you can \"save\" your game and exit,"
 		puts "\"exit\" the game without saving, or ask for \"help\"."
-		puts ""
-		puts "Press ENTER when you are ready to continue."
-		gets
+		enter_to_continue
 	end
 
 	def turn(player_color)
@@ -226,10 +225,6 @@ class Chess
 		move
 	end
 
-	def other_input_options(input)
-
-	end
-
 	# Removes a piece in the given position from the gameboard
 	def remove_piece(position)
 		@pieces.delete_if { |piece| piece.position == position }
@@ -293,6 +288,13 @@ class Chess
 		else
 			:invalid_move
 		end
+	end
+
+	# Requires the user to push ENTER to continue the script
+	def enter_to_continue
+		puts ""
+		puts "Press ENTER when you are ready to continue."
+		gets
 	end
 
 end
