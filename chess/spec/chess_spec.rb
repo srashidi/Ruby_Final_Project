@@ -73,23 +73,24 @@ describe Chess do
 			black_knight = "\u{265E}"
 			black_rook = "\u{265C}"
 			black_pawn = "\u{265F}"
-			expect(STDOUT).to receive(:puts).with("_________________________________________")
-			expect(STDOUT).to receive(:puts).with("| #{black_rook}  | #{black_knight}  | #{black_bishop}  | #{black_queen}  | #{black_king}  | #{black_bishop}  | #{black_knight}  | #{black_rook}  |")
-			expect(STDOUT).to receive(:puts).with("_________________________________________")
-			expect(STDOUT).to receive(:puts).with("| #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  |")
-			expect(STDOUT).to receive(:puts).with("_________________________________________")
-			expect(STDOUT).to receive(:puts).with("|    |    |    |    |    |    |    |    |")
-			expect(STDOUT).to receive(:puts).with("_________________________________________")
-			expect(STDOUT).to receive(:puts).with("|    |    |    |    |    |    |    |    |")
-			expect(STDOUT).to receive(:puts).with("_________________________________________")
-			expect(STDOUT).to receive(:puts).with("|    |    |    |    |    |    |    |    |")
-			expect(STDOUT).to receive(:puts).with("_________________________________________")
-			expect(STDOUT).to receive(:puts).with("|    |    |    |    |    |    |    |    |")
-			expect(STDOUT).to receive(:puts).with("_________________________________________")
-			expect(STDOUT).to receive(:puts).with("| #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  |")
-			expect(STDOUT).to receive(:puts).with("_________________________________________")
-			expect(STDOUT).to receive(:puts).with("| #{white_rook}  | #{white_knight}  | #{white_bishop}  | #{white_queen}  | #{white_king}  | #{white_bishop}  | #{white_knight}  | #{white_rook}  |")
-			expect(STDOUT).to receive(:puts).with("_________________________________________")
+			expect(STDOUT).to receive(:puts).with("  _________________________________________")
+			expect(STDOUT).to receive(:puts).with("8 | #{black_rook}  | #{black_knight}  | #{black_bishop}  | #{black_queen}  | #{black_king}  | #{black_bishop}  | #{black_knight}  | #{black_rook}  |")
+			expect(STDOUT).to receive(:puts).with("  _________________________________________")
+			expect(STDOUT).to receive(:puts).with("7 | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  | #{black_pawn}  |")
+			expect(STDOUT).to receive(:puts).with("  _________________________________________")
+			expect(STDOUT).to receive(:puts).with("6 |    |    |    |    |    |    |    |    |")
+			expect(STDOUT).to receive(:puts).with("  _________________________________________")
+			expect(STDOUT).to receive(:puts).with("5 |    |    |    |    |    |    |    |    |")
+			expect(STDOUT).to receive(:puts).with("  _________________________________________")
+			expect(STDOUT).to receive(:puts).with("4 |    |    |    |    |    |    |    |    |")
+			expect(STDOUT).to receive(:puts).with("  _________________________________________")
+			expect(STDOUT).to receive(:puts).with("3 |    |    |    |    |    |    |    |    |")
+			expect(STDOUT).to receive(:puts).with("  _________________________________________")
+			expect(STDOUT).to receive(:puts).with("2 | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  | #{white_pawn}  |")
+			expect(STDOUT).to receive(:puts).with("  _________________________________________")
+			expect(STDOUT).to receive(:puts).with("1 | #{white_rook}  | #{white_knight}  | #{white_bishop}  | #{white_queen}  | #{white_king}  | #{white_bishop}  | #{white_knight}  | #{white_rook}  |")
+			expect(STDOUT).to receive(:puts).with("  _________________________________________")
+			expect(STDOUT).to receive(:puts).with("    A    B    C    D     E    F    G    H  ")
 			@chess.display
 		end
 
@@ -164,11 +165,6 @@ describe Chess do
 			context "when move is not possible" do
 
 				context "when choosing a piece of the correct color" do
-
-					before :each do
-						expect(STDOUT).to receive(:puts).with("")
-						expect(STDOUT).to receive(:puts).with("Choose which position to move your queen:")
-					end
 
 					it "gives an error message" do
 						expect(STDOUT).to receive(:puts).with("")

@@ -41,17 +41,29 @@ class Chess
 		end
 	end
 
+	def turn(player_color)
+		puts ""
+		display
+		puts ""
+		puts "#{player_color.to_s.capitalize}'s turn!"
+		move = move_input(player_color)
+		turn(player_color) if move == :invalid_move
+		puts ""
+		turn(:black) if player_color == :white
+		turn(:white) if player_color == :black
+	end
+
 	# Displays the current gameboard and pieces
 	def display
 
-		row1 = "|    |    |    |    |    |    |    |    |"
-		row2 = "|    |    |    |    |    |    |    |    |"
-		row3 = "|    |    |    |    |    |    |    |    |"
-		row4 = "|    |    |    |    |    |    |    |    |"
-		row5 = "|    |    |    |    |    |    |    |    |"
-		row6 = "|    |    |    |    |    |    |    |    |"
-		row7 = "|    |    |    |    |    |    |    |    |"
 		row8 = "|    |    |    |    |    |    |    |    |"
+		row7 = "|    |    |    |    |    |    |    |    |"
+		row6 = "|    |    |    |    |    |    |    |    |"
+		row5 = "|    |    |    |    |    |    |    |    |"
+		row4 = "|    |    |    |    |    |    |    |    |"
+		row3 = "|    |    |    |    |    |    |    |    |"
+		row2 = "|    |    |    |    |    |    |    |    |"
+		row1 = "|    |    |    |    |    |    |    |    |"
 
 		def line
 			"_________________________________________"
@@ -59,14 +71,14 @@ class Chess
 
 		@pieces.each do |piece|
 			row = case piece.position[1]
-			when 1 then row1
-			when 2 then row2
-			when 3 then row3
-			when 4 then row4
-			when 5 then row5
-			when 6 then row6
-			when 7 then row7
 			when 8 then row8
+			when 7 then row7
+			when 6 then row6
+			when 5 then row5
+			when 4 then row4
+			when 3 then row3
+			when 2 then row2
+			when 1 then row1
 			end
 			column = case piece.position[0]
 			when :A then A
@@ -81,24 +93,24 @@ class Chess
 			row[column] = piece.view
 		end
 
-		puts line
-		puts row1
-		puts line
-		puts row2
-		puts line
-		puts row3
-		puts line
-		puts row4
-		puts line
-		puts row5
-		puts line
-		puts row6
-		puts line
-		puts row7
-		puts line
-		puts row8
-		puts line
-
+		puts "  " + line
+		puts "8 " + row8
+		puts "  " + line
+		puts "7 " + row7
+		puts "  " + line
+		puts "6 " + row6
+		puts "  " + line
+		puts "5 " + row5
+		puts "  " + line
+		puts "4 " + row4
+		puts "  " + line
+		puts "3 " + row3
+		puts "  " + line
+		puts "2 " + row2
+		puts "  " + line
+		puts "1 " + row1
+		puts "  " + line
+		puts "    A    B    C    D     E    F    G    H  "
 	end
 
 	def move_input(color)
@@ -107,12 +119,12 @@ class Chess
 		initial_position = gets.chomp.upcase.gsub(/\s+/,"").split("")
 		initial_position = [initial_position[0].to_sym,initial_position[1].to_i]
 		piece = @pieces.find { |current_piece| current_piece.position == initial_position }
-		if piece != nil && piece.color == color
+		if piece != nil && piece.color == color && possible_moves(piece) != []
 			puts ""
 			puts "Choose which position to move your #{piece.type}:"
 			new_position = gets.chomp.upcase.gsub(/\s+/,"").split("")
 			new_position = [new_position[0].to_sym,new_position[1].to_i]
-			move_piece(initial_position,new_position)
+			move = move_piece(initial_position,new_position)
 		else
 			move = :invalid_move
 		end
@@ -121,6 +133,7 @@ class Chess
 			puts "Error: Invalid move! Try again..."
 			puts ""
 		end
+		move
 	end
 
 	# Removes a piece in the given position from the gameboard

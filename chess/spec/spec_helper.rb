@@ -16,7 +16,7 @@ class Chess
 		initial_position = initial_position.upcase.gsub(/\s+/,"").split("")
 		initial_position = [initial_position[0].to_sym,initial_position[1].to_i]
 		piece = @pieces.find { |current_piece| current_piece.position == initial_position }
-		if piece != nil && piece.color == color
+		if piece != nil && piece.color == color && possible_moves(piece) != []
 			puts ""
 			puts "Choose which position to move your #{piece.type}:"
 			new_position = new_position.upcase.gsub(/\s+/,"").split("")
@@ -30,6 +30,7 @@ class Chess
 			puts "Error: Invalid move! Try again..."
 			puts ""
 		end
+		move
 	end
 
 end
