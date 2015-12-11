@@ -66,6 +66,9 @@ class Chess
 
 	def gameplay_options
 		puts ""
+		puts "When inputting a position on the board, type the letter"
+		puts "of the coordinate first, then the number (ex, \"B5\")."
+		puts "You can also \"castle\" if possible."
 		puts "During the game, you can \"save\" your game and exit,"
 		puts "\"exit\" to menu without saving, or ask for \"help\"."
 		puts ""
@@ -206,6 +209,8 @@ class Chess
 			:save
 		when "EXIT"
 			:exit
+		when "CASTLE"
+			castle(color)
 		else
 			initial_position = initial_position.split("")
 			initial_position = [initial_position[0].to_sym,initial_position[1].to_i]
@@ -217,6 +222,55 @@ class Chess
 			end
 		end
 		move
+	end
+
+	def castle(color,rook_choice=false)
+		row = case color
+		when :white
+			1
+		when :black
+			8
+		end
+		king = @pieces.find { |piece| piece.color == color && piece.type == :king }
+		rook_A = @pieces.find { |piece| piece.color == color && piece.type == :rook && piece.position == [:A,row] }
+		rook_H = @pieces.find { |piece| piece.color == color && piece.type == :rook && piece.position == [:H,row] }
+		rook_A_counter_conditions = rook_A.nil? || rook_A.moving || \
+		@gameboard.occupied_spaces.include?([:B,row]) || \
+		@gameboard.occupied_spaces.include?([:C,row]) || \
+		@gameboard.occupied_spaces.include?([:D,row])
+		rook_H_counter_conditions = rook_H.nil? || rook_H.moving || \
+		@gameboard.occupied_spaces.include?([:F,row]) || \
+		@gameboard.occupied_spaces.include?([:G,row])
+		unless king.moving
+			unless rook_A_counter_conditions && rook_H_counter_conditions
+				if rook_H_counter_conditions || rook_choice == :A
+					move_piece(rook_A.position,[:D,row])
+					@gameboard.occupied_spaces.delete_if { |space| space == king.position }
+					@gameboard.occupied_spaces << [:C,row]
+					king.position = [:C,row]
+					king.moving = true
+				elsif rook_A_counter_conditions || rook_choice == :H
+					move_piece(rook_H.position,[:F,row])
+					@gameboard.occupied_spaces.delete_if { |space| space == king.position }
+					@gameboard.occupied_spaces << [:G,row]
+					king.position = [:G,row]
+					king.moving = true
+				else
+					puts ""
+					puts "Choose the position of the rook you wish to castle with:"
+					rook = gets.chomp.upcase.gsub(/\s+/,"").to_sym
+					if rook == :A || rook == :H
+						castle(color,rook)
+					else
+						:invalid_move
+					end
+				end
+			else
+				:invalid_move
+			end
+		else
+			:invalid_move
+		end
 	end
 
 	# Take user input for the new position
@@ -232,6 +286,8 @@ class Chess
 			:save
 		when "EXIT"
 			:exit
+		when "CASTLE"
+			castle(color)
 		else
 			new_position = new_position.split("")
 			new_position = [new_position[0].to_sym,new_position[1].to_i]
@@ -304,6 +360,7 @@ class Chess
 			@gameboard.occupied_spaces.delete_if { |space| space == initial_position }
 			@gameboard.occupied_spaces << new_position
 			piece.position = new_position
+			piece.moving = true
 			occupier ? occupier.type : nil
 		else
 			:invalid_move

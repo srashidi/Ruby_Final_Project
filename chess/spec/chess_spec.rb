@@ -54,6 +54,177 @@ describe Chess do
 
 	end
 
+	describe "#castle" do
+
+		before :each do
+			@chess.new_game
+			@white_king = @chess.pieces.find { |piece| piece.color == :white && piece.type == :king }
+			@white_rook_A = @chess.pieces.find { |piece| piece.color == :white && piece.type == :rook && piece.position == [:A,1] }
+			@white_rook_H = @chess.pieces.find { |piece| piece.color == :white && piece.type == :rook && piece.position == [:H,1] }
+			@white_queen = @chess.pieces.find { |piece| piece.color == :white && piece.type == :queen }
+			@white_knight_B = @chess.pieces.find { |piece| piece.color == :white && piece.type == :knight && piece.position == [:B,1] }
+			@white_knight_G = @chess.pieces.find { |piece| piece.color == :white && piece.type == :knight && piece.position == [:G,1] }
+			@white_bishop_C = @chess.pieces.find { |piece| piece.color == :white && piece.type == :bishop && piece.position == [:C,1] }
+			@white_bishop_F = @chess.pieces.find { |piece| piece.color == :white && piece.type == :bishop && piece.position == [:F,1] }
+			@white_pawn_B = @chess.pieces.find { |piece| piece.color == :white && piece.type == :pawn && piece.position == [:B,2] }
+			@white_pawn_C = @chess.pieces.find { |piece| piece.color == :white && piece.type == :pawn && piece.position == [:C,2] }
+			@white_pawn_E = @chess.pieces.find { |piece| piece.color == :white && piece.type == :pawn && piece.position == [:E,2] }
+			@chess.move_piece( @white_pawn_B.position,[:B,4] )
+			@chess.move_piece( @white_pawn_C.position,[:C,4] )
+			@chess.move_piece( @white_pawn_E.position,[:E,4] )
+			@chess.move_piece( @white_queen.position,[:A,4] )
+			@chess.move_piece( @white_bishop_C.position,[:B,2] )
+			@chess.move_piece( @white_bishop_F.position,[:E,2] )
+		end
+
+		context "when rooks and king have not moved" do
+
+			context "when no castle is possible" do
+				it "returns an invalid move symbol" do
+					move = @chess.castle(:white)
+					expect(move).to eql :invalid_move
+					expect(@white_king.position).to eql [:E,1]
+					expect(@white_rook_H.position).to eql [:H,1]
+					expect(@white_rook_A.position).to eql [:A,1]
+				end
+			end
+
+			context "when castle with only A-side rook is possible" do
+
+				before :each do
+					@chess.move_piece( @white_knight_B.position, [:A,3] )
+					@chess.castle(:white)
+				end
+
+				it "performs that castle" do
+					expect(@white_king.position).to eql [:C,1]
+					expect(@white_rook_A.position).to eql [:D,1]
+					expect(@white_rook_H.position).to eql [:H,1]
+				end
+
+			end
+
+			context "when castle with only H-side rook is possible" do
+
+				before :each do
+					@chess.move_piece( @white_knight_G.position, [:H,3] )
+					@chess.castle(:white)
+				end
+
+				it "performs that castle" do
+					expect(@white_king.position).to eql [:G,1]
+					expect(@white_rook_H.position).to eql [:F,1]
+					expect(@white_rook_A.position).to eql [:A,1]
+				end
+
+			end
+
+			context "when castle with either rook is possible" do
+
+				before :each do
+					@chess.move_piece( @white_knight_B.position, [:A,3] )
+					@chess.move_piece( @white_knight_G.position, [:H,3] )
+				end
+
+				context "when the A-side rook is chosen" do
+					it "performs that castle" do
+						@chess.castle(:white,:A)
+						expect(@white_king.position).to eql [:C,1]
+						expect(@white_rook_A.position).to eql [:D,1]
+						expect(@white_rook_H.position).to eql [:H,1]
+					end
+				end
+
+				context "when the H-side rook is chosen" do
+					it "performs that castle" do
+						@chess.castle(:white,:H)
+						expect(@white_king.position).to eql [:G,1]
+						expect(@white_rook_H.position).to eql [:F,1]
+						expect(@white_rook_A.position).to eql [:A,1]
+					end
+				end
+
+			end
+
+		end
+
+		context "when rooks or king have moved" do
+
+			context "when A-side rook has moved" do
+
+				before :each do
+					@chess.move_piece( @white_knight_B.position, [:A,3] )
+					@chess.move_piece( @white_rook_A.position, [:B,1] )
+				end
+
+				context "when castle with H-side rook is not possible" do
+					it "returns an invalid move symbol" do
+						move = @chess.castle(:white)
+						expect(move).to eql :invalid_move
+						expect(@white_king.position).to eql [:E,1]
+						expect(@white_rook_H.position).to eql [:H,1]
+						expect(@white_rook_A.position).to eql [:B,1]
+					end
+				end
+
+				context "when castle with H-side rook is possible" do
+
+					before :each do
+						@chess.move_piece( @white_knight_G.position, [:H,3] )
+						@chess.castle(:white)
+					end
+
+					it "performs that castle" do
+						expect(@white_king.position).to eql [:G,1]
+						expect(@white_rook_H.position).to eql [:F,1]
+						expect(@white_rook_A.position).to eql [:B,1]
+					end
+
+				end
+
+			end
+
+			context "when both rooks have been moved" do
+
+				before :each do
+					@chess.move_piece( @white_knight_B.position, [:A,3] )
+					@chess.move_piece( @white_rook_A.position, [:B,1] )
+					@chess.move_piece( @white_knight_G.position, [:H,3] )
+					@chess.move_piece( @white_rook_H.position, [:G,1] )
+				end
+
+				it "returns an invalid move symbol" do
+					move = @chess.castle(:white)
+					expect(move).to eql :invalid_move
+					expect(@white_king.position).to eql [:E,1]
+					expect(@white_rook_H.position).to eql [:G,1]
+					expect(@white_rook_A.position).to eql [:B,1]
+				end
+
+			end
+
+			context "when the king has been moved" do
+
+				before :each do
+					@chess.move_piece( @white_knight_B.position, [:A,3] )
+					@chess.move_piece( @white_knight_G.position, [:H,3] )
+					@chess.move_piece( @white_king.position, [:D,1] )
+				end
+
+				it "returns an invalid move symbol" do
+					move = @chess.castle(:white)
+					expect(move).to eql :invalid_move
+					expect(@white_king.position).to eql [:D,1]
+					expect(@white_rook_H.position).to eql [:H,1]
+					expect(@white_rook_A.position).to eql [:A,1]
+				end
+
+			end
+
+		end
+
+	end
+
 	describe "#display" do
 
 		before :each do
