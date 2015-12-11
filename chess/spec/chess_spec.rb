@@ -341,9 +341,6 @@ describe Chess do
 				end
 
 				it "removes the opposing piece and replaces it with the moving piece" do
-					expect(STDOUT).to receive(:puts).with("")
-					expect(STDOUT).to receive(:puts).with("A black pawn has been captured!")
-					expect(STDOUT).to receive(:puts).with("")
 					@chess.move_piece( @white_knight.position, @black_pawn.position )
 					expect(@chess.pieces.count(@black_pawn)).to eql 0
 					expect(@white_knight.position).to eql [:E,5]
@@ -369,6 +366,91 @@ describe Chess do
 
 			it "returns an invalid_move symbol" do
 				expect(@move).to eql :invalid_move
+			end
+
+		end
+
+	end
+
+	describe "#king_status" do
+
+		before :each do
+			@chess.new_game
+			@white_queen = @chess.pieces.find { |piece| piece.color == :white && piece.type == :queen }
+			@black_king = @chess.pieces.find { |piece| piece.color == :black && piece.type == :king }
+			@white_knight = @chess.pieces.find { |piece| piece.color == :white && piece.type == :knight && piece.position == [:G,1] }
+			@black_knight = @chess.pieces.find { |piece| piece.color == :black && piece.type == :knight && piece.position == [:G,8] }
+			@white_pawn = @chess.pieces.find { |piece| piece.color == :white && piece.type == :pawn && piece.position == [:E,2] }
+			@white_pawn_F = @chess.pieces.find { |piece| piece.color == :white && piece.type == :pawn && piece.position == [:F,2] }
+			@black_pawn = @chess.pieces.find { |piece| piece.color == :black && piece.type == :pawn && piece.position == [:E,7] }
+			@white_bishop = @chess.pieces.find { |piece| piece.color == :white && piece.type == :bishop && piece.position == [:F,1] }
+			@black_bishop = @chess.pieces.find { |piece| piece.color == :black && piece.type == :bishop && piece.position == [:F,8] }
+			@chess.move_piece( @white_pawn.position, [:E,4] )
+			@chess.move_piece( @black_pawn.position, [:E,6] )
+			@chess.move_piece( @white_queen.position, [:G,4] )
+			@chess.move_piece( @black_knight.position, [:F,6] )
+			@chess.move_piece( @white_queen.position, [:F,4] )
+			@chess.move_piece( @black_pawn.position, [:E,5] )
+		end
+
+		context "when king is in check" do
+
+			before :each do
+				@chess.move_piece( @white_queen.position, [:E,5] )
+			end
+
+			it "returns a check status symbol" do
+				expect(@chess.king_status(:black)).to eql :check
+			end
+
+		end
+
+		context "when king is not in check" do
+
+			it "returns a safe status symbol" do
+				expect(@chess.king_status(:black)).to eql :safe
+			end
+
+		end
+
+		context "when king is in checkmate" do
+
+			before :each do
+				@chess.move_piece( @white_queen.position, [:E,5] )
+				@chess.move_piece( @black_bishop.position, [:E,7] )
+				@chess.move_piece( @white_queen.position, [:G,5] )
+				@chess.move_piece( @black_knight.position, [:E,4] )
+				@chess.move_piece( @white_queen.position, [:G,7] )
+				@chess.move_piece( @black_knight.position, [:D,6] )
+				@chess.move_piece( @white_queen.position, [:H,8] )
+				@chess.move_piece( @black_bishop.position, [:F,8] )
+				@chess.move_piece( @white_knight.position, [:F,3] )
+				@chess.move_piece( @black_knight.position, [:F,5] )
+				@chess.move_piece( @white_knight.position, [:G,5] )
+				@chess.move_piece( @black_bishop.position, [:G,7] )
+				@chess.move_piece( @white_queen.position, [:G,7] )
+				@chess.move_piece( @black_knight.position, [:D,4] )
+				@chess.move_piece( @white_knight.position, [:F,7] )
+				@chess.move_piece( @black_knight.position, [:F,3] )
+				@chess.move_piece( @white_bishop.position, [:C,4] )
+				@chess.move_piece( @black_king.position, [:E,7] )
+				@chess.move_piece( @white_queen.position, [:H,7] )
+				@chess.move_piece( @black_knight.position, [:D,4] )
+				@chess.move_piece( @white_knight.position, [:G,5] )
+				@chess.move_piece( @black_king.position, [:F,6] )
+				@chess.move_piece( @white_queen.position, [:F,7] )
+				@chess.move_piece( @black_king.position, [:E,5] )
+				@chess.move_piece( @white_pawn_F.position, [:F,4] )
+				@chess.move_piece( @black_king.position, [:D,6] )
+				@chess.move_piece( @white_knight.position, [:E,4] )
+				@chess.move_piece( @black_king.position, [:C,6] )
+				@chess.move_piece( @white_queen.position, [:D,5] )
+				@chess.move_piece( @black_king.position, [:B,6] )
+				@chess.move_piece( @white_queen.position, [:C,5] )
+			end
+
+			it "returns a check status symbol" do
+				expect(@chess.king_status(:black)).to eql :checkmate
 			end
 
 		end

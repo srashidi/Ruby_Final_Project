@@ -53,21 +53,24 @@ class Chess
 		puts "Each player will take turns, starting with"
 		puts "white, and whoever can put the other"
 		puts "player's king in checkmate wins!"
-		puts ""
-		puts "During the game, you can \"save\" your game and exit,"
-		puts "\"exit\" the game without saving, or ask for \"help\"."
-		enter_to_continue
+		gameplay_options
 		turn(:white)
 	end
 
 	def load_game(saved_info)
 		@gameboard = saved_info[0]
 		@pieces = saved_info[1]
+		gameplay_options
+		turn(saved_info[2])
+	end
+
+	def gameplay_options
 		puts ""
 		puts "During the game, you can \"save\" your game and exit,"
-		puts "\"exit\" the game without saving, or ask for \"help\"."
-		enter_to_continue
-		turn(saved_info[2])
+		puts "\"exit\" to menu without saving, or ask for \"help\"."
+		puts ""
+		puts "Press ENTER when you are ready to continue."
+		gets
 	end
 
 	def save_game(player_color)
@@ -81,16 +84,17 @@ class Chess
 		puts ""
 		puts "An explanation of the rules of chess has been opened on"
 		puts "your default browser."
-		puts "During the game, you can \"save\" your game and exit,"
-		puts "\"exit\" the game without saving, or ask for \"help\"."
-		enter_to_continue
+		gameplay_options
 	end
 
 	def turn(player_color)
+		opponent_color = :black if player_color == :white
+		opponent_color = :white if player_color == :black
 		puts ""
 		display
 		puts ""
 		puts "#{player_color.to_s.capitalize}'s turn!"
+		check_message(player_color) if king_status(player_color) == :check
 		move = move_input(player_color)
 		puts ""
 		case move
@@ -100,18 +104,28 @@ class Chess
 		when :save
 			save_game(player_color)
 			puts "Game saved!"
-			puts "Goodbye!"
 			puts ""
 		when :exit
-			puts "Goodbye!"
 			puts ""
+		when :unsafe
+			puts "Danger: This move will not take your king out of check!"
+			puts "Try again..."
+			puts ""
+			turn(player_color)
 		when :invalid_move
 			puts "Error: Invalid move! Try again..."
 			puts ""
 			turn(player_color)
 		else
-			turn(:black) if player_color == :white
-			turn(:white) if player_color == :black
+			unless move.nil?
+				type = move
+				puts ""
+				string = type == :queen ? "The " : "A "
+				puts string + "#{opponent_color} #{type} has been captured!"
+				puts ""
+			end
+			checkmate_message(opponent_color) if king_status(opponent_color) == :checkmate
+			turn(opponent_color) unless king_status(opponent_color) == :checkmate
 		end
 	end
 
@@ -225,7 +239,12 @@ class Chess
 			if piece != nil && piece.color == color && possible_moves(piece) != []
 				new_position_input(new_position,color,piece)
 			else
-				move = move_piece(initial_position,new_position)
+				if king_status(color) == :check
+					move = temporary_move(piece,new_position)
+					move_piece(initial_position,new_position) if move == :safe
+				else
+					move = move_piece(initial_position,new_position)
+				end
 			end
 		end
 		move
@@ -281,26 +300,65 @@ class Chess
 		piece = @pieces.find { |current_piece| current_piece.position == initial_position }
 		occupier = @pieces.find { |current_piece| current_piece.position == new_position }
 		if possible_moves(piece).include?(new_position)
-			if occupier
-				puts ""
-				string = occupier.type == :queen ? "The " : "A "
-				puts string + "#{occupier.color} #{occupier.type} has been captured!"
-				puts ""
-				remove_piece(occupier.position)
-			end
+			remove_piece(occupier.position) if occupier
 			@gameboard.occupied_spaces.delete_if { |space| space == initial_position }
 			@gameboard.occupied_spaces << new_position
 			piece.position = new_position
+			occupier ? occupier.type : nil
 		else
 			:invalid_move
 		end
 	end
 
-	# Requires the user to push ENTER to continue the script
-	def enter_to_continue
+	def temporary_move(piece,new_position)
+		status = nil
+		original_position = piece.position
+		@gameboard.occupied_spaces.delete_if {|space| space == original_position }
+		@gameboard.occupied_spaces << new_position
+		opposing_piece = @pieces.find {|opponent| opponent.color != piece.color && opponent.position == new_position}
+		@pieces.delete(opposing_piece) if opposing_piece
+		piece.position = new_position
+		status = :safe if king_status(piece.color,true) == :safe
+		@gameboard.occupied_spaces.pop
+		@gameboard.occupied_spaces << original_position
+		piece.position = original_position
+		@pieces << opposing_piece if opposing_piece
+		status = :unsafe unless status == :safe
+		status
+	end
+
+	def king_status(player_color,check=false)
+		king = @pieces.find { |piece| piece.type == :king && piece.color == player_color }
+		status = :safe
+		@pieces.each do |piece|
+			if piece.color != player_color && possible_moves(piece).include?(king.position)
+				status = :check
+			end
+		end
+		if status == :check && check == false
+			@pieces.each do |piece|
+				if piece.color == player_color
+					possible_moves(piece).each do |possibility|
+						move = temporary_move(piece,possibility)
+						return status if move == :safe
+					end
+				end
+			end
+			status = :checkmate
+		end
+		status
+	end
+
+	def check_message(color)
 		puts ""
-		puts "Press ENTER when you are ready to continue."
-		gets
+		puts "The #{color} king is in check!"
+	end
+
+	def checkmate_message(color)
+		puts ""
+		puts "The #{color} king is in checkmate!"
+		puts "Black wins!" if color == :white
+		puts "White wins!" if color == :black
 	end
 
 end

@@ -14,8 +14,10 @@ class GameMenu
 		case choice
 		when 1
 			Chess.new
+			initialize
 		when 2
 			load_menu
+			initialize
 		when 3
 			puts "Goodbye!"
 		else

@@ -7,13 +7,8 @@ class Chess
 
 	attr_reader :test_mode, :gameboard, :pieces
 
-	def initialize(test_mode,*saved_info)
+	def initialize(test_mode)
 		@test_mode = test_mode
-		if p.nil?
-			new_game
-		else
-			load_game
-		end
 	end
 
 	def new_game
