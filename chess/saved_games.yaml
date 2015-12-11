@@ -1,0 +1,390 @@
+---
+- !ruby/object:Gameboard
+  spaces:
+  - - :A
+    - 1
+  - - :A
+    - 2
+  - - :A
+    - 3
+  - - :A
+    - 4
+  - - :A
+    - 5
+  - - :A
+    - 6
+  - - :A
+    - 7
+  - - :A
+    - 8
+  - - :B
+    - 1
+  - - :B
+    - 2
+  - - :B
+    - 3
+  - - :B
+    - 4
+  - - :B
+    - 5
+  - - :B
+    - 6
+  - - :B
+    - 7
+  - - :B
+    - 8
+  - - :C
+    - 1
+  - - :C
+    - 2
+  - - :C
+    - 3
+  - - :C
+    - 4
+  - - :C
+    - 5
+  - - :C
+    - 6
+  - - :C
+    - 7
+  - - :C
+    - 8
+  - - :D
+    - 1
+  - - :D
+    - 2
+  - - :D
+    - 3
+  - - :D
+    - 4
+  - - :D
+    - 5
+  - - :D
+    - 6
+  - - :D
+    - 7
+  - - :D
+    - 8
+  - - :E
+    - 1
+  - - :E
+    - 2
+  - - :E
+    - 3
+  - - :E
+    - 4
+  - - :E
+    - 5
+  - - :E
+    - 6
+  - - :E
+    - 7
+  - - :E
+    - 8
+  - - :F
+    - 1
+  - - :F
+    - 2
+  - - :F
+    - 3
+  - - :F
+    - 4
+  - - :F
+    - 5
+  - - :F
+    - 6
+  - - :F
+    - 7
+  - - :F
+    - 8
+  - - :G
+    - 1
+  - - :G
+    - 2
+  - - :G
+    - 3
+  - - :G
+    - 4
+  - - :G
+    - 5
+  - - :G
+    - 6
+  - - :G
+    - 7
+  - - :G
+    - 8
+  - - :H
+    - 1
+  - - :H
+    - 2
+  - - :H
+    - 3
+  - - :H
+    - 4
+  - - :H
+    - 5
+  - - :H
+    - 6
+  - - :H
+    - 7
+  - - :H
+    - 8
+  occupied_spaces:
+  - &1
+    - :E
+    - 1
+  - &2
+    - :D
+    - 1
+  - &3
+    - :H
+    - 1
+  - &4
+    - :A
+    - 1
+  - &5
+    - :G
+    - 1
+  - &6
+    - :B
+    - 1
+  - &7
+    - :F
+    - 1
+  - &8
+    - :C
+    - 1
+  - &9
+    - :A
+    - 2
+  - &10
+    - :B
+    - 2
+  - &13
+    - :E
+    - 2
+  - &14
+    - :F
+    - 2
+  - &15
+    - :G
+    - 2
+  - &16
+    - :H
+    - 2
+  - &17
+    - :E
+    - 8
+  - &18
+    - :D
+    - 8
+  - &19
+    - :H
+    - 8
+  - &20
+    - :A
+    - 8
+  - &21
+    - :G
+    - 8
+  - &23
+    - :F
+    - 8
+  - &24
+    - :C
+    - 8
+  - &25
+    - :A
+    - 7
+  - &26
+    - :B
+    - 7
+  - &27
+    - :C
+    - 7
+  - &28
+    - :D
+    - 7
+  - &29
+    - :E
+    - 7
+  - &30
+    - :F
+    - 7
+  - &31
+    - :G
+    - 7
+  - &32
+    - :H
+    - 7
+  - &11
+    - :C
+    - 4
+  - &12
+    - :D
+    - 4
+  - &22
+    - :B
+    - 4
+- - !ruby/object:Piece
+    type: :king
+    color: :white
+    position: *1
+    moving: false
+  - !ruby/object:Piece
+    type: :queen
+    color: :white
+    position: *2
+    moving: false
+  - !ruby/object:Piece
+    type: :rook
+    color: :white
+    position: *3
+    moving: false
+  - !ruby/object:Piece
+    type: :rook
+    color: :white
+    position: *4
+    moving: false
+  - !ruby/object:Piece
+    type: :knight
+    color: :white
+    position: *5
+    moving: false
+  - !ruby/object:Piece
+    type: :knight
+    color: :white
+    position: *6
+    moving: false
+  - !ruby/object:Piece
+    type: :bishop
+    color: :white
+    position: *7
+    moving: false
+  - !ruby/object:Piece
+    type: :bishop
+    color: :white
+    position: *8
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :white
+    position: *9
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :white
+    position: *10
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :white
+    position: *11
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :white
+    position: *12
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :white
+    position: *13
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :white
+    position: *14
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :white
+    position: *15
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :white
+    position: *16
+    moving: false
+  - !ruby/object:Piece
+    type: :king
+    color: :black
+    position: *17
+    moving: false
+  - !ruby/object:Piece
+    type: :queen
+    color: :black
+    position: *18
+    moving: false
+  - !ruby/object:Piece
+    type: :rook
+    color: :black
+    position: *19
+    moving: false
+  - !ruby/object:Piece
+    type: :rook
+    color: :black
+    position: *20
+    moving: false
+  - !ruby/object:Piece
+    type: :knight
+    color: :black
+    position: *21
+    moving: false
+  - !ruby/object:Piece
+    type: :knight
+    color: :black
+    position: *22
+    moving: false
+  - !ruby/object:Piece
+    type: :bishop
+    color: :black
+    position: *23
+    moving: false
+  - !ruby/object:Piece
+    type: :bishop
+    color: :black
+    position: *24
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :black
+    position: *25
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :black
+    position: *26
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :black
+    position: *27
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :black
+    position: *28
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :black
+    position: *29
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :black
+    position: *30
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :black
+    position: *31
+    moving: false
+  - !ruby/object:Piece
+    type: :pawn
+    color: :black
+    position: *32
+    moving: false
+- :white
+- 2015-12-10 17:27:48.383679000 -08:00

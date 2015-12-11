@@ -61,11 +61,18 @@ class Chess
 	end
 
 	def load_game(saved_info)
+		@gameboard = saved_info[0]
+		@pieces = saved_info[1]
+		puts ""
+		puts "During the game, you can \"save\" your game and exit,"
+		puts "\"exit\" the game without saving, or ask for \"help\"."
+		enter_to_continue
+		turn(saved_info[2])
 	end
 
-	def save_game(player_colorcolor)
+	def save_game(player_color)
 		File.open("saved_games.yaml", "a") do |out|
-      YAML::dump([@gameboard,@pieces,player_color], out)
+      YAML::dump([@gameboard,@pieces,player_color,Time.now], out)
     end
 	end
 
@@ -85,7 +92,6 @@ class Chess
 		puts ""
 		puts "#{player_color.to_s.capitalize}'s turn!"
 		move = move_input(player_color)
-		turn(player_color) if move == :invalid_move
 		puts ""
 		case move
 		when :help
@@ -191,7 +197,7 @@ class Chess
 			initial_position = [initial_position[0].to_sym,initial_position[1].to_i]
 			piece = @pieces.find { |current_piece| current_piece.position == initial_position }
 			if piece != nil && piece.color == color && possible_moves(piece) != []
-				move = new_position_input(piece)
+				move = new_position_input(initial_position,color,piece)
 			else
 				move = :invalid_move
 			end
@@ -200,12 +206,12 @@ class Chess
 	end
 
 	# Take user input for the new position
-	def new_position_input(color,piece)
+	def new_position_input(initial_position,color,piece)
 		puts ""
 		puts "Choose which position to move your #{piece.type},"
 		puts "or choose a different piece by inputting its position:"
 		new_position = gets.chomp.upcase.gsub(/\s+/,"")
-		case initial_position
+		case new_position
 		when "HELP"
 			:help
 		when "SAVE"
@@ -217,7 +223,7 @@ class Chess
 			new_position = [new_position[0].to_sym,new_position[1].to_i]
 			piece = @pieces.find { |current_piece| current_piece.position == new_position }
 			if piece != nil && piece.color == color && possible_moves(piece) != []
-				new_position_input(color,piece)
+				new_position_input(new_position,color,piece)
 			else
 				move = move_piece(initial_position,new_position)
 			end
