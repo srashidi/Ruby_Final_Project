@@ -53,6 +53,8 @@ class Chess
 			:save
 		when "EXIT"
 			:exit
+		when "CASTLE"
+			castle(color)
 		else
 			initial_position = initial_position.split("")
 			initial_position = [initial_position[0].to_sym,initial_position[1].to_i]
@@ -82,11 +84,21 @@ class Chess
 		else
 			new_position = new_position.split("")
 			new_position = [new_position[0].to_sym,new_position[1].to_i]
-			piece = @pieces.find { |current_piece| current_piece.position == new_position }
-			if piece != nil && piece.color == color && possible_moves(piece) != []
-				new_position_input(new_position,new_input.flatten[0],color,piece)
+			current_piece = @pieces.find { |piece| piece.position == initial_position }
+			new_piece = @pieces.find { |piece| piece.position == new_position }
+			if new_piece != nil && new_piece.color == color && possible_moves(new_piece) != []
+				new_position_input(new_position,new_input.flatten[0],color,new_piece)
 			else
-				move = move_piece(initial_position,new_position)
+				if king_status(color) == :check
+					status = temporary_move(current_piece,new_position)
+					if status == :safe
+						move = move_piece(initial_position,new_position)
+					else
+						move = :unsafe
+					end
+				else
+					move = move_piece(initial_position,new_position)
+				end
 			end
 		end
 		move
@@ -108,8 +120,10 @@ class GameMenu
 		case choice
 		when 1
 			Chess.new
+			initialize(new_input)
 		when 2
 			load_game
+			initialize(new_input)
 		when 3
 			puts "Goodbye!"
 		else

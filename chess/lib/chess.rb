@@ -90,45 +90,59 @@ class Chess
 		gameplay_options
 	end
 
-	def turn(player_color)
+	def turn(player_color,type=nil)
 		opponent_color = :black if player_color == :white
 		opponent_color = :white if player_color == :black
+		end_row = case opponent_color
+		when :white
+			8
+		when :black
+			1
+		end
+		pawn = @pieces.find { |piece| piece.type == :pawn && piece.position[1] == end_row}
+		promoted = promotion(pawn) unless pawn.nil?
 		puts ""
 		display
-		puts ""
-		puts "#{player_color.to_s.capitalize}'s turn!"
-		check_message(player_color) if king_status(player_color) == :check
-		move = move_input(player_color)
-		puts ""
-		case move
-		when :help
-			help
-			turn(player_color)
-		when :save
-			save_game(player_color)
-			puts "Game saved!"
+		if type == :queen || type == :bishop || type == :knight || type == :rook || type == :pawn
 			puts ""
-		when :exit
+			string = type == :queen ? "The " : "A "
+			puts string + "#{player_color} #{type} has been captured!"
+		end
+		if promoted
 			puts ""
-		when :unsafe
-			puts "Danger: This move will not take your king out of check!"
-			puts "Try again..."
-			puts ""
-			turn(player_color)
-		when :invalid_move
-			puts "Error: Invalid move! Try again..."
-			puts ""
-			turn(player_color)
+			puts "A #{opponent_color} pawn has been promoted to a queen!"
+		end
+		if king_status(player_color) == :checkmate
+			checkmate_message(player_color)
+			play_again
 		else
-			unless move.nil?
-				type = move
+			puts ""
+			puts "#{player_color.to_s.capitalize}'s turn!"
+			check_message(player_color) if king_status(player_color) == :check
+			move = move_input(player_color)
+			puts ""
+			case move
+			when :help
+				help
+				turn(player_color)
+			when :save
+				save_game(player_color)
+				puts "Game saved!"
 				puts ""
-				string = type == :queen ? "The " : "A "
-				puts string + "#{opponent_color} #{type} has been captured!"
+			when :exit
 				puts ""
+			when :unsafe
+				puts "Danger: This move will cause your king to be in check!"
+				puts "Try again..."
+				puts ""
+				turn(player_color)
+			when :invalid_move
+				puts "Error: Invalid move! Try again..."
+				puts ""
+				turn(player_color)
+			else
+				turn(opponent_color,move)
 			end
-			checkmate_message(opponent_color) if king_status(opponent_color) == :checkmate
-			turn(opponent_color) unless king_status(opponent_color) == :checkmate
 		end
 	end
 
@@ -192,6 +206,20 @@ class Chess
 		puts "    A    B    C    D     E    F    G    H  "
 	end
 
+	def play_again
+		puts ""
+		puts "Play again? (\"yes\" or \"no\")"
+		input = gets.chomp.downcase.gsub(/\s+/,"")
+		case input
+		when "yes"
+			initialize
+		when "no"
+		else
+			puts "Error: Invalid input! Try again..."
+			play_again
+		end
+	end
+
 	# Initiates move input
 	def move_input(color)
 		initial_position_input(color)
@@ -224,55 +252,6 @@ class Chess
 		move
 	end
 
-	def castle(color,rook_choice=false)
-		row = case color
-		when :white
-			1
-		when :black
-			8
-		end
-		king = @pieces.find { |piece| piece.color == color && piece.type == :king }
-		rook_A = @pieces.find { |piece| piece.color == color && piece.type == :rook && piece.position == [:A,row] }
-		rook_H = @pieces.find { |piece| piece.color == color && piece.type == :rook && piece.position == [:H,row] }
-		rook_A_counter_conditions = rook_A.nil? || rook_A.moving || \
-		@gameboard.occupied_spaces.include?([:B,row]) || \
-		@gameboard.occupied_spaces.include?([:C,row]) || \
-		@gameboard.occupied_spaces.include?([:D,row])
-		rook_H_counter_conditions = rook_H.nil? || rook_H.moving || \
-		@gameboard.occupied_spaces.include?([:F,row]) || \
-		@gameboard.occupied_spaces.include?([:G,row])
-		unless king.moving
-			unless rook_A_counter_conditions && rook_H_counter_conditions
-				if rook_H_counter_conditions || rook_choice == :A
-					move_piece(rook_A.position,[:D,row])
-					@gameboard.occupied_spaces.delete_if { |space| space == king.position }
-					@gameboard.occupied_spaces << [:C,row]
-					king.position = [:C,row]
-					king.moving = true
-				elsif rook_A_counter_conditions || rook_choice == :H
-					move_piece(rook_H.position,[:F,row])
-					@gameboard.occupied_spaces.delete_if { |space| space == king.position }
-					@gameboard.occupied_spaces << [:G,row]
-					king.position = [:G,row]
-					king.moving = true
-				else
-					puts ""
-					puts "Choose the position of the rook you wish to castle with:"
-					rook = gets.chomp.upcase.gsub(/\s+/,"").to_sym
-					if rook == :A || rook == :H
-						castle(color,rook)
-					else
-						:invalid_move
-					end
-				end
-			else
-				:invalid_move
-			end
-		else
-			:invalid_move
-		end
-	end
-
 	# Take user input for the new position
 	def new_position_input(initial_position,color,piece)
 		puts ""
@@ -291,15 +270,16 @@ class Chess
 		else
 			new_position = new_position.split("")
 			new_position = [new_position[0].to_sym,new_position[1].to_i]
-			piece = @pieces.find { |current_piece| current_piece.position == new_position }
-			if piece != nil && piece.color == color && possible_moves(piece) != []
-				new_position_input(new_position,color,piece)
+			current_piece = @pieces.find { |piece| piece.position == initial_position }
+			new_piece = @pieces.find { |piece| piece.position == new_position }
+			if new_piece != nil && new_piece.color == color && possible_moves(new_piece) != []
+				new_position_input(new_position,color,new_piece)
 			else
-				if king_status(color) == :check
-					move = temporary_move(piece,new_position)
-					move_piece(initial_position,new_position) if move == :safe
-				else
+				status = temporary_move(current_piece,new_position)
+				if status == :safe
 					move = move_piece(initial_position,new_position)
+				else
+					move = :unsafe
 				end
 			end
 		end
@@ -350,6 +330,65 @@ class Chess
 		moves_hash.values.flatten(1)
 	end
 
+	# Allows player to castle
+	def castle(color,rook_choice=false)
+		row = case color
+		when :white
+			1
+		when :black
+			8
+		end
+		king = @pieces.find { |piece| piece.color == color && piece.type == :king }
+		rook_A = @pieces.find { |piece| piece.color == color && piece.type == :rook && piece.position == [:A,row] }
+		rook_H = @pieces.find { |piece| piece.color == color && piece.type == :rook && piece.position == [:H,row] }
+		rook_A_counter_conditions = rook_A.nil? || rook_A.moving || \
+		@gameboard.occupied_spaces.include?([:B,row]) || \
+		@gameboard.occupied_spaces.include?([:C,row]) || \
+		@gameboard.occupied_spaces.include?([:D,row])
+		rook_H_counter_conditions = rook_H.nil? || rook_H.moving || \
+		@gameboard.occupied_spaces.include?([:F,row]) || \
+		@gameboard.occupied_spaces.include?([:G,row])
+		unless king.moving
+			unless rook_A_counter_conditions && rook_H_counter_conditions
+				if rook_H_counter_conditions || rook_choice == :A
+					move_piece(rook_A.position,[:D,row])
+					@gameboard.occupied_spaces.delete_if { |space| space == king.position }
+					@gameboard.occupied_spaces << [:C,row]
+					king.position = [:C,row]
+					king.moving = true
+				elsif rook_A_counter_conditions || rook_choice == :H
+					move_piece(rook_H.position,[:F,row])
+					@gameboard.occupied_spaces.delete_if { |space| space == king.position }
+					@gameboard.occupied_spaces << [:G,row]
+					king.position = [:G,row]
+					king.moving = true
+				else
+					puts ""
+					puts "Choose the position of the rook you wish to castle with:"
+					rook = gets.chomp.upcase.gsub(/\s+/,"").to_sym
+					if rook == :A || rook == :H
+						castle(color,rook)
+					else
+						:invalid_move
+					end
+				end
+			else
+				:invalid_move
+			end
+		else
+			:invalid_move
+		end
+	end
+
+	# Promotes piece to a queen type if it reaches the end of the board
+	def promotion(pawn)
+		position = pawn.position
+		color = pawn.color
+		remove_piece(position)
+		@pieces << Piece.new(:queen,color,position)
+		@gameboard.occupied_spaces << position
+	end
+
 	# Moves a piece in a given position to another given position
 	# if it is a possible move
 	def move_piece(initial_position,new_position)
@@ -380,7 +419,6 @@ class Chess
 		@gameboard.occupied_spaces << original_position
 		piece.position = original_position
 		@pieces << opposing_piece if opposing_piece
-		status = :unsafe unless status == :safe
 		status
 	end
 
@@ -389,7 +427,7 @@ class Chess
 		status = :safe
 		@pieces.each do |piece|
 			if piece.color != player_color && possible_moves(piece).include?(king.position)
-				status = :check
+				status = :check unless piece.type == :pawn && piece.position[1] = king.position[1]
 			end
 		end
 		if status == :check && check == false

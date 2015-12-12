@@ -273,8 +273,13 @@ describe Chess do
 			@chess.new_game
 			@white_queen = @chess.pieces.find { |piece| piece.color == :white && piece.type == :queen }
 			@white_knight = @chess.pieces.find { |piece| piece.color == :white && piece.type == :knight && piece.position == [:G,1] }
+			@black_knight = @chess.pieces.find { |piece| piece.color == :black && piece.type == :knight && piece.position == [:G,8] }
+			@white_pawn = @chess.pieces.find { |piece| piece.color == :white && piece.type == :pawn && piece.position == [:E,2] }
+			@white_pawn_F = @chess.pieces.find { |piece| piece.color == :white && piece.type == :pawn && piece.position == [:F,2] }
 			@black_pawn = @chess.pieces.find { |piece| piece.color == :black && piece.type == :pawn && piece.position == [:E,7] }
-			@white_pawn = @chess.pieces.find { |piece| piece.color == :white && piece.type == :pawn && piece.position == [:F,2] }
+			@black_pawn_D = @chess.pieces.find { |piece| piece.color == :black && piece.type == :pawn && piece.position == [:D,7] }
+			@white_bishop = @chess.pieces.find { |piece| piece.color == :white && piece.type == :bishop && piece.position == [:F,1] }
+			@black_bishop = @chess.pieces.find { |piece| piece.color == :black && piece.type == :bishop && piece.position == [:F,8] }
 			expect(STDOUT).to receive(:puts).with("")
 			expect(STDOUT).to receive(:puts).with("Choose the position of the piece you want to move:")
 		end
@@ -283,13 +288,10 @@ describe Chess do
 
 			context "when move is possible" do
 
-				before :each do
+				it "moves the piece in the initial position to the new position" do
 					expect(STDOUT).to receive(:puts).with("")
 					expect(STDOUT).to receive(:puts).with("Choose which position to move your knight,")
 					expect(STDOUT).to receive(:puts).with("or choose a different piece by inputting its position:")
-				end
-
-				it "moves the piece in the initial position to the new position" do
 					@chess.move_input("G1","F3",:white)
 					expect(@white_knight.position).to eql [:F,3]
 					occupied = @chess.gameboard.occupied_spaces
@@ -304,6 +306,9 @@ describe Chess do
 				context "when input includes whitespace" do
 
 					it "moves the piece in the initial position to the new position" do
+						expect(STDOUT).to receive(:puts).with("")
+						expect(STDOUT).to receive(:puts).with("Choose which position to move your knight,")
+						expect(STDOUT).to receive(:puts).with("or choose a different piece by inputting its position:")
 						@chess.move_input("G 1"," F3",:white)
 						expect(@white_knight.position).to eql [:F,3]
 						occupied = @chess.gameboard.occupied_spaces
@@ -320,6 +325,9 @@ describe Chess do
 				context "when input has lowercase letters instead of uppercase letters" do
 
 					it "moves the piece in the initial position to the new position" do
+						expect(STDOUT).to receive(:puts).with("")
+						expect(STDOUT).to receive(:puts).with("Choose which position to move your knight,")
+						expect(STDOUT).to receive(:puts).with("or choose a different piece by inputting its position:")
 						@chess.move_input("g1","f3",:white)
 						expect(@white_knight.position).to eql [:F,3]
 						occupied = @chess.gameboard.occupied_spaces
@@ -329,6 +337,39 @@ describe Chess do
 						search = @chess.pieces.find { |piece| piece.position == [:G,1] }
 						expect(search).to be_nil
 						expect(occupied.find { |space| space == [:G,1] }).to be_nil
+					end
+
+				end
+
+				context "when player is in check" do
+
+					before :each do
+						expect(STDOUT).to receive(:puts).with("")
+						expect(STDOUT).to receive(:puts).with("Choose which position to move your pawn,")
+						expect(STDOUT).to receive(:puts).with("or choose a different piece by inputting its position:")
+						@chess.move_input("E2","E3",:white)
+						expect(STDOUT).to receive(:puts).with("")
+						expect(STDOUT).to receive(:puts).with("Choose the position of the piece you want to move:")
+						expect(STDOUT).to receive(:puts).with("")
+						expect(STDOUT).to receive(:puts).with("Choose which position to move your pawn,")
+						expect(STDOUT).to receive(:puts).with("or choose a different piece by inputting its position:")
+						@chess.move_input("D7","D5",:black)
+						expect(STDOUT).to receive(:puts).with("")
+						expect(STDOUT).to receive(:puts).with("Choose the position of the piece you want to move:")
+						expect(STDOUT).to receive(:puts).with("")
+						expect(STDOUT).to receive(:puts).with("Choose which position to move your bishop,")
+						expect(STDOUT).to receive(:puts).with("or choose a different piece by inputting its position:")
+						@chess.move_input("F1","B5",:white)
+						expect(STDOUT).to receive(:puts).with("")
+						expect(STDOUT).to receive(:puts).with("Choose the position of the piece you want to move:")
+						expect(STDOUT).to receive(:puts).with("")
+						expect(STDOUT).to receive(:puts).with("Choose which position to move your bishop,")
+						expect(STDOUT).to receive(:puts).with("or choose a different piece by inputting its position:")
+					end
+
+					it "takes the player out of check" do
+						@chess.move_input("C8","D7",:black)
+						expect(@chess.king_status(:black)).not_to eql :check
 					end
 
 				end
@@ -346,7 +387,7 @@ describe Chess do
 					expect(STDOUT).to receive(:puts).with("or choose a different piece by inputting its position:")
 					@chess.move_input("G1","F2",:white,"F3")
 					expect(@white_knight.position).to eql [:G,1]
-					expect(@white_pawn.position).to eql [:F,3]
+					expect(@white_pawn_F.position).to eql [:F,3]
 					occupied = @chess.gameboard.occupied_spaces
 					search = @chess.pieces.find { |piece| piece.position == [:G,1] }
 					expect(search).to be_truthy
@@ -384,6 +425,7 @@ describe Chess do
 				end
 
 			end
+
 
 		end
 
